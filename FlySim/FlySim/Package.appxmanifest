@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
+  <Identity Name="d2c8ad69-00a6-4fce-a5c1-a9a5f00b11ac" Publisher="CN=codes" Version="1.0.0.0" />
+  <mp:PhoneIdentity PhoneProductId="d2c8ad69-00a6-4fce-a5c1-a9a5f00b11ac" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Properties>
+    <DisplayName>FlySim</DisplayName>
+    <PublisherDisplayName>codes</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+  </Dependencies>
+  <Resources>
+    <Resource Language="x-generate" />
+  </Resources>
+  <Applications>
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="FlySim.App">
+      <uap:VisualElements DisplayName="FlySim" Square150x150Logo="Assets\MediumTile.png" Square44x44Logo="Assets\AppIcon.png" Description="FlySim" BackgroundColor="#000000">
+        <uap:DefaultTile Wide310x150Logo="Assets\WideTile.png" Square310x310Logo="Assets\LargeTile.png" Square71x71Logo="Assets\SmallTile.png">
+        </uap:DefaultTile>
+        <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#000000" />
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="internetClient" />
+  </Capabilities>
+</Package>

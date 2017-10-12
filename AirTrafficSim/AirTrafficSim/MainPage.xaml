@@ -1,0 +1,163 @@
+﻿<Page xmlns:Controls="using:AirTrafficSim.Controls"  
+      xmlns:maps="using:Windows.UI.Xaml.Controls.Maps" 
+    x:Class="AirTrafficSim.MainPage"
+      xmlns:telerikChart="using:Telerik.UI.Xaml.Controls.Chart"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AirTrafficSim"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:behaviors="using:Microsoft.Toolkit.Uwp.UI.Animations.Behaviors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid>
+        <Grid.Background>
+            <ImageBrush Stretch="UniformToFill" ImageSource="Images/AirTrafficSim_back.jpg"/>
+        </Grid.Background>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition MinWidth="800" Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition MinHeight="400" Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Margin="20,20,10,10" >
+
+            <StackPanel Margin="40,0" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Opacity="0.6" FontSize="32" FontFamily="{ThemeResource SymbolThemeFontFamily}" Text=""/>
+                    <TextBlock VerticalAlignment="Center" Opacity="0.6" FontSize="24" Text="Active Flights"/>
+                </StackPanel>
+                <TextBlock FontSize="36" Text="{Binding ActivePlaneCount, Converter={StaticResource ActiveLabelConverter}}"/>
+
+                <StackPanel Margin="0,20,0,0" Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Opacity="0.6" FontSize="32" FontFamily="{ThemeResource SymbolThemeFontFamily}" Text=""/>
+                    <TextBlock Opacity="0.6" FontSize="24" Text="Safe Flights"/>
+                </StackPanel>
+
+                <TextBlock FontSize="36" Text="{Binding SafePlaneCount, Converter={StaticResource ActiveLabelConverter}}"/>
+
+                <StackPanel Margin="0,20,0,0" Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Opacity="0.6" FontSize="32" FontFamily="{ThemeResource SymbolThemeFontFamily}" Text=""/>
+                    <TextBlock Opacity="0.6" FontSize="24" Text="At Risk Flights"/>
+                </StackPanel>
+
+                <TextBlock FontSize="36" Text="{Binding AtRiskPlaneCount, Converter={StaticResource ActiveLabelConverter}}"/>
+
+                <StackPanel Margin="0,20,0,0" Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center" Opacity="0.6" FontSize="32" FontFamily="{ThemeResource SymbolThemeFontFamily}" Text=""/>
+                    <TextBlock Opacity="0.6" FontSize="24" Text="Conditions"/>
+                </StackPanel>
+
+                <TextBlock FontSize="36" Text="Clear"/>
+
+            </StackPanel>
+
+            <Rectangle RadiusX="8" RadiusY="8" StrokeDashArray="4,4,4,4" Stroke="White" StrokeThickness="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        </Grid>
+
+        <Grid Margin="20,20,10,20" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50*"/>
+                <RowDefinition Height="50*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.RowSpan="2">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0.6" FontSize="24" Text="Altitudes"/>
+
+                <telerikChart:RadCartesianChart Margin="10" Grid.Row="1" ScrollViewer.BringIntoViewOnFocusChange="True"  RequestedTheme="Dark" DataContext="{Binding}" PaletteName="DefaultDark">
+                    <telerikChart:RadCartesianChart.EmptyContent>
+                        <TextBlock VerticalAlignment="Top" Text="(awaiting active flight data)" FontWeight="Light" FontSize="20"/>
+                    </telerikChart:RadCartesianChart.EmptyContent>
+                    <telerikChart:RadCartesianChart.Behaviors>
+                        <telerikChart:ChartPanAndZoomBehavior ZoomMode="Horizontal" PanMode="Horizontal"/>
+                    </telerikChart:RadCartesianChart.Behaviors>
+                    <telerikChart:RadCartesianChart.HorizontalAxis>
+                        <telerikChart:CategoricalAxis Visibility="Collapsed"/>
+                    </telerikChart:RadCartesianChart.HorizontalAxis>
+                    <telerikChart:RadCartesianChart.VerticalAxis>
+                        <telerikChart:LinearAxis/>
+                    </telerikChart:RadCartesianChart.VerticalAxis>
+                    <telerikChart:LineSeries ItemsSource="{Binding AverageMaxAltitudes}">
+
+                        <telerikChart:LineSeries.ValueBinding>
+                            <telerikChart:PropertyNameDataPointBinding PropertyName="Value"/>
+                        </telerikChart:LineSeries.ValueBinding>
+                    </telerikChart:LineSeries>
+                    <telerikChart:LineSeries ItemsSource="{Binding AverageMinAltitudes}">
+
+                        <telerikChart:LineSeries.ValueBinding>
+                            <telerikChart:PropertyNameDataPointBinding PropertyName="Value"/>
+                        </telerikChart:LineSeries.ValueBinding>
+                    </telerikChart:LineSeries>
+
+                </telerikChart:RadCartesianChart>
+                <Rectangle Grid.RowSpan="2" RadiusX="8" RadiusY="8" StrokeDashArray="4,4,4,4" Stroke="White" StrokeThickness="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+            </Grid>
+
+        </Grid>
+
+        <Grid Margin="10,20,40,20" Grid.Column="1" Grid.RowSpan="2">
+
+            <maps:MapControl ZoomLevelChanged="OnZoomChanged" Margin="16" LandmarksVisible="True" x:Name="flightMap" 
+                            MapServiceToken="{x:Bind MapServiceToken}"  
+                            ZoomInteractionMode="GestureAndControl"  
+                            ColorScheme="Dark" Style="Aerial3DWithRoads"
+                            IsTabStop="False">
+
+                <maps:MapItemsControl ItemsSource="{Binding ActivePlanes}">
+                    <maps:MapItemsControl.ItemTemplate>
+                        <DataTemplate>
+                                <Controls:ActivePlaneControl UseLayoutRounding="True" PilotId="{Binding DisplayName}" maps:MapControl.NormalizedAnchorPoint="1.0, 1.0" maps:MapControl.Location="{Binding Location}" />
+                        </DataTemplate>
+                    </maps:MapItemsControl.ItemTemplate>
+                </maps:MapItemsControl>
+            </maps:MapControl>
+            <Grid Margin="10" x:Name="mapGrid" />
+            
+            <Rectangle RadiusX="8" RadiusY="8" StrokeDashArray="4,4,4,4" Stroke="White" StrokeThickness="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+        </Grid>
+
+
+        <Grid RequestedTheme="Dark" VerticalAlignment="Bottom" Height="100" Grid.ColumnSpan="2" Grid.Row="2" Background="#CC000000">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>                
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>                
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Margin="20,0,0,0" VerticalAlignment="Center" Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Text="" FontSize="32" FontFamily="{ThemeResource SymbolThemeFontFamily}"/>
+                <TextBlock Margin="10,0" FontWeight="SemiLight" VerticalAlignment="Center" FontSize="32" Text="{Binding CurrentTime, Converter={StaticResource LocalTimeConverter}}" />
+            </StackPanel>
+
+            <AppBarButton Margin="0,0,20,0" Click="OnViewAreaClicked" VerticalAlignment="Center" Grid.Column="2" Label="View Area">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE123;"/>
+                </AppBarButton.Icon>
+            </AppBarButton>
+
+            <AppBarButton Margin="0,0,20,0" Click="OnIntoViewClicked" VerticalAlignment="Center" Grid.Column="3" Label="Into View">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE14E;"/>
+                </AppBarButton.Icon>
+            </AppBarButton>
+
+        </Grid>
+
+    </Grid>
+</Page>

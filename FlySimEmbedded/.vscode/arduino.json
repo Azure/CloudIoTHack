@@ -1,0 +1,6 @@
+{
+    "sketch": "FlySim.ino",
+    "port": "COM3",
+    "board": "AZ3166:stm32f4:MXCHIP_AZ3166",
+    "configuration": "upload_method=OpenOCDMethod"
+}

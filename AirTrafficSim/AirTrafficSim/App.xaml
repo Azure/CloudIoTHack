@@ -1,0 +1,32 @@
+﻿<Application
+    x:Class="AirTrafficSim.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:AirTrafficSim.Common"
+    xmlns:local="using:AirTrafficSim"
+    RequestedTheme="Dark">
+
+    <Application.Resources>
+
+        <SolidColorBrush x:Key="MainBackground">#FFEBEBEB</SolidColorBrush>
+        <SolidColorBrush x:Key="DarkBackground">#FF1A1A1A</SolidColorBrush>
+        <SolidColorBrush x:Key="AppAccentBrush">#FF000000</SolidColorBrush>
+        <SolidColorBrush x:Key="AppAccentBrushLight">#FF555555</SolidColorBrush>
+        <SolidColorBrush x:Key="AppAccentBrushSemiTransparent">#66000000</SolidColorBrush>
+
+        <SolidColorBrush x:Key="AppStatusOkBrush">#FFB8D432</SolidColorBrush>
+        <SolidColorBrush x:Key="AppStatusAtRiskBrush">#FFD90000</SolidColorBrush>
+        <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="#FFB8D432"/>
+        
+        <converters:NumberDisplayLabelConverter x:Key="NumberDisplayLabelConverter" />
+        <converters:LocalTimeConverter x:Key="LocalTimeConverter" />
+        <converters:TemperatureLabelConverter x:Key="TemperatureLabelConverter" />
+        <converters:ActiveLabelConverter x:Key="ActiveLabelConverter" />
+        <converters:StatusToFillConverter x:Key="StatusToFillConverter" />
+        <converters:MilesDisplayLabelConverter x:Key="MilesDisplayLabelConverter" />
+        <converters:HasContentToVisibilityConverter x:Key="HasContentToVisibilityConverter" />
+        <converters:BooleanToFalseConverter x:Key="BooleanToFalseConverter" />
+        
+    </Application.Resources>
+
+</Application>
