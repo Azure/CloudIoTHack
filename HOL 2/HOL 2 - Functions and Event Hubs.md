@@ -8,7 +8,7 @@
 
 In Lab 1, you configured an [MXChip](https://microsoft.github.io/azure-iot-developer-kit/) to transmit accelerometer data to an Azure IoT Hub. That IoT Hub receives a stream of data revealing the device's 3D orientation in space. It knows, for example, whether the device is tilted forward or backward (and by how much), and it knows when the device is rotated left and right. The app that you uploaded to the device transmits an event containing X, Y, and Z accelerometer readings every two seconds.
 
-In Lab 2, you will build the infrastructure necessary to fly a simulated aircraft using your MXChip. That infrastructure will consist of an Azure function that transforms accelerometer readings passing through the IoT Hub into flight data denoting the position and attitude of an aircraft, as well as an Azure Event Hub that receives data from the function. Once the function and Event Hub are in place, you will connect a client app named **FlySim** to the Event Hub and practice flying an aircraft using your MXChip. The client app, pictured below, subscribes to events from the Event Hub and shows the position and attitude of your aircraft in real time.
+In Lab 2, you will build the infrastructure necessary to fly a simulated aircraft using your MXChip. That infrastructure will consist of an Azure Function that transforms accelerometer readings passing through the IoT Hub into flight data denoting the position and attitude of an aircraft, as well as an Azure Event Hub that receives data from the Azure function. Once the Function and Event Hub are in place, you will connect a client app named **FlySim** to the Event Hub and practice flying an aircraft using your MXChip. The client app, pictured below, subscribes to events from the Event Hub and shows the position and attitude of your aircraft in real time.
 
 ![](Images/app-in-flight.png)
 
@@ -115,9 +115,9 @@ Now that the storage account has been created, it's time to create an Azure func
 <a name="Exercise3"></a>
 ## Exercise 3: Write an Azure function to transform data ##
 
-[Azure functions](https://azure.microsoft.com/services/functions/) enable you to deploy code to the cloud and execute it there without separately spinning up virtual machines (VMs) or other infrastructure to host them. They can be written in a number of languages, including C#, F#, JavaScript, Python, Bash, and PowerShell, and they are easily connected to IoT Hubs and Event Hubs.
+[Azure Functions](https://azure.microsoft.com/services/functions/) enable you to deploy code to the cloud and execute it there without separately spinning up virtual machines (VMs) or other infrastructure to host them. They can be written in a number of languages, including C#, F#, JavaScript, Python, Bash, and PowerShell, and they are easily connected to IoT Hubs and Event Hubs.
 
-You can write Azure functions in the Azure Portal, or you can write them in Visual Studio 2017. In this exercise, you will use Visual Studio 2017 to write an Azure function that transforms raw accelerometer data arriving at the IoT Hub you created in Lab 1 into flight data denoting the latitude, longitude, altitude, airspeed, heading, and attitude (pitch and roll) of an aircraft, and that transmits the transformed data to the Event Hub you created in [Exercise 1](#Exercise1). 
+You can write Azure Functions in the Azure Portal, or you can write them in Visual Studio 2017. In this exercise, you will use Visual Studio 2017 to write an Azure function that transforms raw accelerometer data arriving at the IoT Hub you created in Lab 1 into flight data denoting the latitude, longitude, altitude, airspeed, heading, and attitude (pitch and roll) of an aircraft, and that transmits the transformed data to the Event Hub you created in [Exercise 1](#Exercise1). 
 
 1. Start Visual Studio 2017 and use the **Help** > **About Microsoft Visual Studio** command to verify that you are running Visual Studio 15.3 or higher. If not, update Visual Studio now.
 

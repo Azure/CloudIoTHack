@@ -126,7 +126,7 @@ In order to write code and upload it to the MXChip, you need to set up a develop
  
 1. After the developer kit is installed, unplug the USB cable from your device. Then start Visual Studio Code.
 
-1. Select **About** from Visual Studio Code's **Help** menu and verify that Visual Studio Code 1.16.0 or higher is installed. If it's not, select **Restart to Update...** from the **Help** menu to update to the latest version, or go to https://code.visualstudio.com/ and download the latest version. Then restart Visual Studio Code.
+1. Select **About** from Visual Studio Code's **Help** menu and verify that Visual Studio Code 1.17.0 or higher is installed. If it's not, select **Check for Updates...** from the **Help** menu and update to the latest version, or go to https://code.visualstudio.com/ and download the latest version. Then restart Visual Studio Code.
 
 1. Plug the USB cable back into the device. If you are prompted to allow Java traffic through the firewall, click **Allow Access**.
  
@@ -136,13 +136,13 @@ In order to write code and upload it to the MXChip, you need to set up a develop
 
     _Launching the Arduino Board Manager_ 
 
-1. Type "AZ3166" into the search box and verify that version 1.1.0 or higher of the IoT Developer Kit is installed. If not, click the **Select version** button and select the latest version from the list. Then click the **Install** button to update the developer kit. 
+1. Type "AZ3166" into the search box and verify that the latest version of the IoT Developer Kit is installed. If it is not, click the **Select version** button and select the latest version from the list. Then click the **Install** button to update the developer kit. 
  
 	![The VSCode Arduino Board Manager tab is open, showing how to verify the developer kit version number.](Images/vs-check-board-installed.png)
 
     _Verifying the developer kit version number_
 
-1. Open the command palette again and select **Arduino: Library Manager**. Type "Arduino Json" into the search box. If the version of the package that's installed isn't the latest version shown in the drop-down list, select the latest version from the list and click **Install** to install it.
+1. Open the command palette again and select **Arduino: Library Manager**. Type "ArduinoJson" into the search box. If the version of the package that's installed isn't the latest version shown in the drop-down list, select the latest version from the list and click **Install** to install it.
 
 	![The VSCode Arduino Library Manager tab is open, showing the install button selected for the updating of the ArduinoJson library.](Images/vs-install-json.png)
 
