@@ -13,22 +13,22 @@ namespace FlySim
         private string _displayName;
         public string DisplayName
         {
-            get { return this._displayName; }
-            set { this.SetProperty(ref this._displayName, value); }
+            get => this._displayName;
+            set => this.SetProperty(ref this._displayName, value);
         }
 
         private Geopoint _location;
         public Geopoint Location
         {
-            get { return this._location; }
-            set { this.SetProperty(ref this._location, value); }
+            get => this._location;
+            set => this.SetProperty(ref this._location, value);
         }
 
         private long _lastUpdated;
         public long LastUpdated
         {
-            get { return this._lastUpdated; }
-            set { this.SetProperty(ref this._lastUpdated, value); }
+            get => this._lastUpdated;
+            set => this.SetProperty(ref this._lastUpdated, value);
         }
 
     }

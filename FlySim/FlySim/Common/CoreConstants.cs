@@ -10,7 +10,7 @@ namespace FlySim.Common
     {
         public static string FlightActivityEventHubEndpoint = "EVENT_HUB_ENDPOINT";
         public static string FlightActivityEventHubName = "flysim";
-        
+
         public static double AreaRadius = 80467.0;
         public static double InitialZoomLevel = 9.0;
         public static double AtRiskThreshold = 10560.0;

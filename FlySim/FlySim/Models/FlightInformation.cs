@@ -17,57 +17,57 @@ namespace FlySim
         private string _displayName;
         public string DisplayName
         {
-            get { return this._displayName; }
-            set { this.SetProperty(ref this._displayName, value); }
+            get => this._displayName;
+            set => this.SetProperty(ref this._displayName, value);
         }
 
         private double _currentPitch;
         public double CurrentPitch
         {
-            get { return this._currentPitch; }
-            set { this.SetProperty(ref this._currentPitch, value); }
+            get => this._currentPitch;
+            set => this.SetProperty(ref this._currentPitch, value);
         }
 
         private double _currentAltitude;
         public double CurrentAltitude
         {
-            get { return this._currentAltitude; }
-            set { this.SetProperty(ref this._currentAltitude, value); }
+            get => this._currentAltitude;
+            set => this.SetProperty(ref this._currentAltitude, value);
         }
 
         private double _currentHeading;
         public double CurrentHeading
         {
-            get { return this._currentHeading; }
-            set { this.SetProperty(ref this._currentHeading, value); }
+            get => this._currentHeading;
+            set => this.SetProperty(ref this._currentHeading, value);
         }
 
         private double _currentSpeed;
         public double CurrentSpeed
         {
-            get { return this._currentSpeed; }
-            set { this.SetProperty(ref this._currentSpeed, value); }
+            get => this._currentSpeed;
+            set => this.SetProperty(ref this._currentSpeed, value);
         }
 
         private double _currentTemperature;
         public double CurrentTemperature
         {
-            get { return this._currentTemperature; }
-            set { this.SetProperty(ref this._currentTemperature, value); }
+            get => this._currentTemperature;
+            set => this.SetProperty(ref this._currentTemperature, value);
         }
 
         private double _currentHumidity;
         public double CurrentHumidity
         {
-            get { return this._currentHumidity; }
-            set { this.SetProperty(ref this._currentHumidity, value); }
+            get => this._currentHumidity;
+            set => this.SetProperty(ref this._currentHumidity, value);
         }
 
         private double _currentRoll;
         public double CurrentRoll
         {
-            get { return this._currentRoll; }
-            set { this.SetProperty(ref this._currentRoll, value); }
+            get => this._currentRoll;
+            set => this.SetProperty(ref this._currentRoll, value);
         }
 
        
