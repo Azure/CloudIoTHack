@@ -439,7 +439,7 @@ The "FlySim" folder in the lab download contains a Universal Windows Platform (U
 
 1. Hold the MXChip in the palm of your hand so that the gold connectors are at the rear (pointed toward your body). Imagine that the MXChip is an aircraft, and that the end with the gold connectors is the tail of the plane and the end with the micro-USB connector is the nose of the plane.
  
-1. Tilt the board to the right and confirm that the artificial horizon rotates accordingly. Note that the artificial horizon will rotate in the **opposite direction of the board** — just like the artificial horizon in the instrument panel of a real plane. Also confirm that if you hold the right turn, the heading readout increases and the heading arrow on the map rotates clockwise.
+1. Tilt the board to the right and confirm that the artificial horizon rotates accordingly. Note that the artificial horizon will rotate in the **opposite direction of the board** — just like the artificial horizon in the instrument panel of a real plane. Also confirm that if you hold the right turn, the heading readout increases and the airplane on the map rotates clockwise.
 
 	> Expect a slight delay between the time you move the board and the app responds. Most of the delay is due to the fact that the app running on the MXChip is only transmitting events every couple of seconds. The latency resulting from events being transmitted from the MXChip to an IoT Hub in the cloud, then transformed, sent to an Event Hub, and transmitted down to the client app is minimal unless you have a very slow WiFi connection.
 
