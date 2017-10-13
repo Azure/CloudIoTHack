@@ -27,14 +27,6 @@ namespace AirTrafficSim.Controls
 
         public static readonly DependencyProperty PilotIdProperty = DependencyProperty.Register("PilotId", typeof(string), typeof(ActivePlaneControl), null);
 
-        public Visibility ZoomMediumLevel
-        {
-            get { return (Visibility)base.GetValue(ZoomMediumLevelProperty); }
-            set { base.SetValue(ZoomMediumLevelProperty, value); }
-        }
-
-        public static readonly DependencyProperty ZoomMediumLevelProperty = DependencyProperty.Register("ZoomMediumLevel", typeof(Visibility), typeof(ActivePlaneControl), null);
-
         public Visibility ZoomDeepLevel
         {
             get { return (Visibility)base.GetValue(ZoomDeepLevelProperty); }

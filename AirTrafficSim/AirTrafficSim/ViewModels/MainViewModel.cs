@@ -59,8 +59,6 @@ namespace AirTrafficSim
                     }),
                     Status = Common.FlightStatus.Inactive,
                 });
-
-                //this.ActivePlanes.RemoveAt(0);
             });
             
         }
@@ -174,23 +172,11 @@ namespace AirTrafficSim
 
         private void UpdatePlaneZoomLevel(double value)
         {
-            if (value < 90)
+            foreach (var plane in ActivePlanes)
             {
-                foreach (var plane in ActivePlanes)
-                {
-                    plane.ZoomMediumLevel = (value < 90) ? Visibility.Visible : Visibility.Collapsed;
-                    plane.ZoomDeepLevel = (value < 30) ? Visibility.Visible : Visibility.Collapsed;
-                }
+                plane.ZoomDeepLevel = (value < 90) ? Visibility.Visible : Visibility.Collapsed;
             }
-            else
-            {
-                foreach (var plane in ActivePlanes)
-                {
-                    plane.ZoomMediumLevel = Visibility.Collapsed;
-                    plane.ZoomDeepLevel =  Visibility.Collapsed;
-                }
-            }
-            
+
         }
 
         public async Task<bool> BringPlanesIntoViewAsync(MapControl map)
@@ -259,7 +245,6 @@ namespace AirTrafficSim
                 {
                     DisplayName = info.deviceId,
                     ZoomDeepLevel = Visibility.Collapsed,
-                    ZoomMediumLevel = Visibility.Collapsed,
                     Location = new Windows.Devices.Geolocation.Geopoint(
                         new Windows.Devices.Geolocation.BasicGeoposition()
                         {
@@ -359,7 +344,6 @@ namespace AirTrafficSim
                         {
                             DisplayName = info.deviceId,
                             ZoomDeepLevel = Visibility.Collapsed,
-                            ZoomMediumLevel = Visibility.Collapsed,
                             Location = new Windows.Devices.Geolocation.Geopoint(
                                 new Windows.Devices.Geolocation.BasicGeoposition()
                                 {
@@ -412,7 +396,7 @@ namespace AirTrafficSim
                             w.PilotId.Equals(activePlane.DisplayName, StringComparison.OrdinalIgnoreCase));
 
                         if (planeControl != null)
-                        {
+                        {   
                             MapControl.SetLocation(planeControl, new Geopoint(new BasicGeoposition()
                             {
                                 Latitude = info.latitude,
@@ -448,108 +432,6 @@ namespace AirTrafficSim
                 
             FlightActivityListener.CurrentDelay = 1;
         }
-
-        //public async void UpdateFlightInformation(NewFlightInfo info)
-        //{
-        //    var dispatcher = Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher;
- 
-
-        //    await dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () =>
-        //    {
-        //        var activePlane = this.ActivePlanes.FirstOrDefault(w => w.DisplayName.Equals(info.deviceId));
-
-        //        if (activePlane == null)
-        //        {
-        //            this.ActivePlanes.Add(new ActivePlaneInformation()
-        //            {
-        //                DisplayName = info.deviceId,
-        //                ZoomDeepLevel = Visibility.Collapsed,
-        //                ZoomMediumLevel = Visibility.Collapsed,
-        //                Location = new Windows.Devices.Geolocation.Geopoint(
-        //                    new Windows.Devices.Geolocation.BasicGeoposition()
-        //                    {
-        //                        Latitude = info.latitude,
-        //                        Longitude = info.longitude,
-        //                    }),
-
-        //                FlightInformation = new FlightInformation(info.altitude)
-        //                {
-        //                    CurrentAltitude = info.altitude,
-        //                    CurrentHeading = info.heading,
-        //                    CurrentTemperature = info.temperature,
-        //                    CurrentHumidity = info.humidity,
-        //                    CurrentRoll = info.roll,
-        //                    CurrentSpeed = info.airspeed,
-        //                    CurrentPitch = info.pitch,
-        //                    CurrentLatitude = info.latitude,
-        //                    CurrentLongitude = info.longitude,
-        //                },
-
-        //                Status = (App.ViewModel.AtRiskPlanes.Contains(info.deviceId, StringComparer.OrdinalIgnoreCase))
-        //                    ? Common.FlightStatus.AtRisk
-        //                    : Common.FlightStatus.Ok,
-        //            });
-
-        //        }
-        //        else
-        //        {
-        //            activePlane.DisplayName = info.deviceId;
-
-        //            activePlane.FlightInformation.CurrentAltitude = info.altitude;
-        //            activePlane.FlightInformation.CurrentHeading = info.heading;
-        //            activePlane.FlightInformation.CurrentTemperature = info.temperature;
-        //            activePlane.FlightInformation.CurrentHumidity = info.humidity;
-
-        //            activePlane.FlightInformation.CurrentRoll = info.roll;
-        //            activePlane.FlightInformation.CurrentSpeed = info.airspeed;
-        //            activePlane.FlightInformation.CurrentPitch = info.pitch;
-
-        //            activePlane.FlightInformation.CurrentLatitude = info.latitude;
-        //            activePlane.FlightInformation.CurrentLongitude = info.longitude;
-
-        //            activePlane.Status =
-        //                (App.ViewModel.AtRiskPlanes.Contains(info.deviceId, StringComparer.OrdinalIgnoreCase))
-        //                    ? Common.FlightStatus.AtRisk
-        //                    : Common.FlightStatus.Ok;
-
-        //            var planeControl = this.FlightMap.FindDescendants<ActivePlaneControl>().FirstOrDefault(w =>
-        //                w.PilotId.Equals(activePlane.DisplayName, StringComparison.OrdinalIgnoreCase));
-
-        //            if (planeControl != null)
-        //            {
-                        
-
-        //                    MapControl.SetLocation(planeControl, new Geopoint(new BasicGeoposition()
-        //                    {
-        //                        Latitude = info.latitude,
-        //                        Longitude = info.longitude,
-        //                    }));
-
-                        
-
-
-        //            }
-        //        }
-
-        //        this.ActivePlaneCount = this.ActivePlanes.Count(w => w.Status == FlightStatus.Ok);
-        //        this.AtRiskPlaneCount = this.ActivePlanes.Count(w => w.Status == FlightStatus.AtRisk);
-        //        this.SafePlaneCount = this.ActivePlaneCount - this.AtRiskPlaneCount;
-
-        //        this.AverageMaxAltitudes.Add(new FlightAnalysisData()
-        //        {
-        //            Label = "Max Altitude",
-        //            Value = this.ActivePlanes.Where(w => w.Status != Common.FlightStatus.Inactive).Max(m => Convert.ToInt32(m.FlightInformation.CurrentAltitude))
-        //        });
-
-        //        this.AverageMinAltitudes.Add(new FlightAnalysisData()
-        //        {
-        //            Label = "Min Altitude",
-        //            Value = this.ActivePlanes.Where(w => w.Status != Common.FlightStatus.Inactive).Min(m => Convert.ToInt32(m.FlightInformation.CurrentAltitude))
-        //        });
-
-        //    });
-
-        //}
         
         public void UpdateAllActivePlaneStatus()
         {

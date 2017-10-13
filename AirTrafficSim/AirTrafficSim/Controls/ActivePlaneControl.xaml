@@ -10,7 +10,7 @@
     d:DesignWidth="120">
 
     <Canvas Width="120" Height="120" Margin="-60">
-        <Grid Visibility="{Binding ZoomMediumLevel, FallbackValue=Collapsed}" RenderTransformOrigin="0,0" Canvas.Top="60" Canvas.Left="60">
+        <Grid Visibility="{Binding ZoomDeepLevel, FallbackValue=Collapsed}" RenderTransformOrigin="0,0" Canvas.Top="60" Canvas.Left="60">
             <Image Width="70" Height="16" Source="ms-appx:///Images/dashedarrow.png" Margin="-15,0,15,0" UseLayoutRounding="False" d:LayoutRounding="Auto">
                 <Image.RenderTransform>
                 <CompositeTransform CenterX="0" CenterY="0" Rotation="-90"/>
@@ -22,7 +22,10 @@
         </Grid>
 
         <Border Visibility="{Binding ZoomDeepLevel, FallbackValue=Collapsed}" Canvas.Left="15" Canvas.Top="75" MinWidth="80" MaxWidth="100" HorizontalAlignment="Right" RequestedTheme="Dark" Background="#1C384F">
-            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" FontSize="10" Margin="3" Text="{Binding DisplayName, FallbackValue=...}"/>
+            <StackPanel>
+                <TextBlock HorizontalAlignment="Center" TextAlignment="Center" FontSize="10" Margin="3,3,3,0" Text="{Binding DisplayName, FallbackValue=...}"/>
+                <TextBlock HorizontalAlignment="Center" TextAlignment="Center" FontSize="10" Margin="3,0,3,3" Text="{Binding FlightInformation.CurrentAltitude, Converter={StaticResource NumberDisplayLabelConverter}}"/>
+            </StackPanel>
         </Border>
 
         <Grid Canvas.Top="45" Canvas.Left="45">

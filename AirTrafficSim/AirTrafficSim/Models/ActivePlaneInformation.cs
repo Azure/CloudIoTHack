@@ -38,14 +38,7 @@ namespace AirTrafficSim
             get { return this._status; }
             set { this.SetProperty(ref this._status, value); }
         }
-
-        private Visibility _zoomMediumLevel;
-        public Visibility ZoomMediumLevel
-        {
-            get { return this._zoomMediumLevel; }
-            set { this.SetProperty(ref this._zoomMediumLevel, value); }
-        }
-
+        
         private Visibility _zoomDeepLevel;
         public Visibility ZoomDeepLevel
         {

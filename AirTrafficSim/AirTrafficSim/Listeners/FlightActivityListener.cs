@@ -61,7 +61,7 @@ namespace AirTrafficSim.Listeners
 
                             this.PendingFlightInfo.Add(flightInfo);
 
-                            if (this.PendingFlightInfo.Count > 100)
+                            if (this.PendingFlightInfo.Count >= App.ViewModel.ActivePlaneCount)
                             {
                                 CurrentDelay = 1000;
 
@@ -91,7 +91,7 @@ namespace AirTrafficSim.Listeners
 
                             this.PendingFlightInfo.Add(flightInfo);
 
-                            if (this.PendingFlightInfo.Count > 100)
+                            if (this.PendingFlightInfo.Count >= App.ViewModel.ActivePlaneCount)
                             {
                                 CurrentDelay = 1000;
 

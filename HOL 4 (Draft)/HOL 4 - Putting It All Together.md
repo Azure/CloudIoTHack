@@ -39,7 +39,7 @@ This lab includes the following exercises:
 - [Exercise 1: Connect the Azure Function to the shared input hub](#Exercise1)
 - [Exercise 2: Connect the client app to the shared output hub](#Exercise2)
 - [Exercise 3: Update the client app to talk back to the device](#Exercise3)
-- [Exercise 4: Fly an airplane through shared air space](#Exercise4)
+- [Exercise 4: Test the finished solution](#Exercise4)
  
 Estimated time to complete this lab: **60** minutes.
 
@@ -157,23 +157,21 @@ FlySim now has the smarts to turn your airplane red if it receives information f
 <a name="Exercise3"></a>
 ## Exercise 3: Update the client app to talk back to the device ##
 
-When warning commands are received from air traffic control, your flight simulator app will need to communicate these messages to your MXChip IoT DevKit device. 
+One of the benefits of using Azure IoT Hubs is that they support bidirectional communication. Devices can send messages to IoT Hubs, and IoT Hubs can send messages back to the devices connected to them. In this exercise, you will modify the FlySim client app to send a message to your MXChip through the IoT Hub it's connected to when your airplane is too close to another airplane. That message will command the MXChip to display a warning message on its screen. For an added touch, you will use Microsoft Cognitive Services to translate the warning message into the language of the user's choice before displaying it on the device. 
 
-In this exercise, you will be updating FlySim to connect to send messages to you MXChip IoT DevKit device, optionally translated into a display language of your choice.
-
-1. Still in Visual Studio 2017, open **CoreConstants.cs** in the **Common** folder, and locate the **SharedAirTrafficHubName** constant added in the previous exercise.
-
-1. Insert the following code directly below the "SharedAirTrafficHubName" constant.
+1. In Visual Studio 2017, open **CoreConstants.cs** in the project's "Common" folder and insert the following statement after the statement declaring ```SharedAirTrafficHubName``` that you added in the previous exercise:
 
 	```C#
 	public static string DeviceMessagingConnectionString = "IOT_DEVICE_ENDPOINT";
 	```
+
 1. In a browser, open the Azure portal and navigate to the **IoT Hub** created in the Lab 2 (such as "flysimiot0001"), select **Shared access policies** from the "SETTINGS" group, then select **iothubownerpolicy** under "POLICY" to display the "iothubowner" policy dialog.
 
 1. Copy the value of **Connection string—primary key** to the clipboard.
 
-	![Copying the IoT Hub connection string to the clipboard](Images/portal-iot-hub-endpoint.png)
-    _Copying the IoT Hub connection string to the clipboard_
+	![Copying the connection string to the clipboard](Images/portal-iot-hub-endpoint.png)
+
+    _Copying the connection string to the clipboard_
 
 1. Back in Visual Studio 2017, paste to replace "IOT_DEVICE_ENDPOINT" in CoreConstants.cs "DeviceMessagingConnectionString" constant with the IoT value copied to the clipboard.
 
@@ -221,7 +219,7 @@ In this exercise, you will be updating FlySim to connect to send messages to you
 Now that your flight simulator app can listen for communciation from air traffic control, as well as communicate warning messages to your device, you're ready to start flying in "shared" air space, with other planes nearby, and potentially too close to your plane, placing your safety at risk.
 
 <a name="Exercise3"></a>
-## Exercise 4: Fly an airplane through shared air space ##
+## Exercise 4: Test the finished solution ##
 	
 Now comes all the fun, and this will be a great introduction into this exercise.
 
