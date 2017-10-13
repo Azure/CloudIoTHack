@@ -136,9 +136,95 @@ In Lab 3, the instructor created an Event Hub and configured Stream Analytics to
 
 1. Return to Visual Studio and replace "SHARED_EVENT_HUB_ENDPOINT" in **CoreConstants.cs** with the value on the clipboard. 
 
-1. In Solution Explorer, right-click the "Listeners" folder and use the **Add** > **Existing Item...** command to add the **AirTrafficListener.cs** file from the "Resources" folder accompanying this lab to the project.
+1. Right-click the "Listeners" folder in Solution Explorer and use the **Add** > **New Item...** command to add a class file named **AirTrafficListener.cs**. Then replace the contents of the file with the following code:
 
-1. Open **MainViewModel.cs** in the project's "ViewModels" folder and insert the following line of code below the ```FlightActivityListener``` property on line 40:
+	```C#
+	using Newtonsoft.Json;
+	using ppatierno.AzureSBLite.Messaging;
+	using System;
+	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
+	using System.Linq;
+	using System.Numerics;
+	using System.Text;
+	using System.Threading.Tasks;
+	using Windows.UI.Core;
+	
+	namespace FlySim.Listeners
+	{
+	    public class AirTrafficListener
+	    {
+	        private EventHubClient client { get; set; }
+	        private EventHubConsumerGroup consumerGroup { get; set; }
+	        private EventHubReceiver receiver { get; set; }
+	        private FlightInformation flightInformation { get; set; }
+	        private ObservableCollection<ActivePlaneInformation> activePlanes { get; set; }
+	
+	        public async void StartListeningAsync(FlightInformation flightInformation, ObservableCollection<ActivePlaneInformation> activePlanes)
+	        {
+	            this.activePlanes = activePlanes;
+	            this.flightInformation = flightInformation;
+	            this.client = EventHubClient.CreateFromConnectionString(Common.CoreConstants.SharedAirTrafficEventHubEndpoint, Common.CoreConstants.SharedAirTrafficHubName);
+	
+	            this.consumerGroup = this.client.GetDefaultConsumerGroup();
+	            this.receiver = this.consumerGroup.CreateReceiver("0", DateTime.Now.ToUniversalTime());
+	
+	            await System.Threading.Tasks.Task.Run(() => StartListeningForTrafficCommands());
+	        }
+	
+	        private async void StartListeningForTrafficCommands()
+	        {
+	            List<PlaneStatusInformation> statusInfo = new List<PlaneStatusInformation>();
+	
+	            while (true)
+	            {
+	                await Task.Delay(1);
+	
+	                try
+	                {
+	                    var eventData = this.receiver.Receive();
+	
+	                    if (eventData != null)
+	                    {
+	                        byte[] bytes = eventData.GetBytes();
+	                        var payload = Encoding.UTF8.GetString(bytes);
+	                        statusInfo.Clear();
+	
+	                        try
+	                        {
+	                            foreach (var info in payload.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+	                            {
+	                                var status = JsonConvert.DeserializeObject<PlaneStatusInfo>(info);
+	
+	                                statusInfo.Add(new PlaneStatusInformation()
+	                                {
+	                                    DisplayName = status.deviceId,
+	                                    Distance = Convert.ToDouble(status.distance),
+	                                    Timestamp = DateTime.ParseExact(status.endtime, @"yyyy-MM-dd\THH:mm:ss.fffffff\Z", System.Globalization.CultureInfo.InvariantCulture),
+	                                    EventTime = DateTime.ParseExact(status.eventtime, @"yyyy-MM-dd\THH:mm:ss.fffffff\Z", System.Globalization.CultureInfo.InvariantCulture),
+	
+	                                });
+	                            }
+	                        }
+	                        catch(Exception)  {}
+	                    }
+	
+	                    var atRiskPlanes = (from info in statusInfo
+	                                        where info.Distance < Common.CoreConstants.AtRiskThreshold
+	                                        select info.DisplayName);
+	
+	                    App.ViewModel.AtRiskPlanes = atRiskPlanes.Distinct().ToList();
+	                }
+	                catch(Exception) { }
+	            }
+	        }
+	    }
+	}
+	```
+
+	The purpose of this code is to listen for events coming from the shared output hub and to update the view-model if your plane is among those "at risk." If it is, it turns red in the view. The heavy lifting is performed by the ```EventHubClient``` and ```EventHubReciver``` classes, which are part of the NuGet package [AzureSBLite](https://github.com/ppatierno/azuresblite). 
+
+1. Open **MainViewModel.cs** in the project's "ViewModels" folder and insert the following line of code below the ```FlightActivityListener``` property on line 40 to create an instance of ```AirTrafficListener```:
 
 	```C#
 	public AirTrafficListener AirTrafficListener = new AirTrafficListener();
@@ -159,50 +245,111 @@ FlySim now has the smarts to turn your airplane red if it receives information f
 
 One of the benefits of using Azure IoT Hubs is that they support bidirectional communication. Devices can send messages to IoT Hubs, and IoT Hubs can send messages back to the devices connected to them. In this exercise, you will modify the FlySim client app to send a message to your MXChip through the IoT Hub it's connected to when your airplane is too close to another airplane. That message will command the MXChip to display a warning message on its screen. For an added touch, you will use Microsoft Cognitive Services to translate the warning message into the language of the user's choice before displaying it on the device. 
 
-1. In Visual Studio 2017, open **CoreConstants.cs** in the project's "Common" folder and insert the following statement after the statement declaring ```SharedAirTrafficHubName``` that you added in the previous exercise:
+1. In Visual Studio, open **CoreConstants.cs** in the project's "Common" folder and insert the following statement after the statement declaring ```SharedAirTrafficHubName``` that you added in the previous exercise:
 
 	```C#
 	public static string DeviceMessagingConnectionString = "IOT_DEVICE_ENDPOINT";
 	```
 
-1. In a browser, open the Azure portal and navigate to the **IoT Hub** created in the Lab 2 (such as "flysimiot0001"), select **Shared access policies** from the "SETTINGS" group, then select **iothubownerpolicy** under "POLICY" to display the "iothubowner" policy dialog.
+1. Return to the Azure Portal and open the IoT Hub that you created in Lab 1. Click **Shared access policies**, and then click **iothubowner**.
 
-1. Copy the value of **Connection string—primary key** to the clipboard.
+	![Viewing shared-access policies for the IoT Hub](Images/open-shared-access-policies.png)
+
+	_Viewing shared-access policies for the IoT Hub_
+
+1. Click the **Copy** button to the right of "Connection string—primary key" to copy the connection string to the clipboard.
 
 	![Copying the connection string to the clipboard](Images/portal-iot-hub-endpoint.png)
 
     _Copying the connection string to the clipboard_
 
-1. Back in Visual Studio 2017, paste to replace "IOT_DEVICE_ENDPOINT" in CoreConstants.cs "DeviceMessagingConnectionString" constant with the IoT value copied to the clipboard.
+1. Return to Visual Studio and replace "IOT_DEVICE_ENDPOINT" in **CoreConstants.cs** with the connection string on the clipboard.
 
-1. In Solution Explorer, right-click the **Helpers** folder, use the **Add** > **Existing Item...** command to add the **MessageHelper.cs** file from the **Resources** folder included in this lab.
-
-1. Still in Solution Explorer, open **ViewModels** > **MainViewModel.cs** and insert the following line of code **below** the "MainViewModel" class initializer:
+1. Right-click the "Helpers" folder in Solution Explorer and use the **Add** > **New Item...** command to add a class file named **MessageHelper.cs**. Then replace the contents of the file with the following code:
 
 	```C#
-	public ICommand SendLanguageChangedCommand { get; private set; }
-	```  
-1. Still in MainViewModel.cs, locate the **InitializeLanguages** method, then add the following single line of code as the first line inside the method: 
-
-	```C#
-	 this.SendLanguageChangedCommand = new RelayCommand(async () => { await SendLanguageChangedMessageAsync(); });
-	```
-
-1. Add a new "SendLanguageChangedMessageAsync" method directly below the **InitializeLanguages** method by adding the following block of code:
-
-	```C#
-    public async Task<bool> SendLanguageChangedMessageAsync()
-    {
-        return await Helpers.MessageHelper.SendMessageToDeviceAsync($"Language:\r\n\t{this.SelectedLanguage.DisplayName}");
-    }
-	```
+	using Microsoft.Azure.Devices;
+	using System;
+	using System.Collections.Generic;
+	using System.Linq;
+	using System.Text;
+	using System.Threading.Tasks;
 	
-	This block of code will send a message to the device any time you make a langauge selection change in the client app.
+	namespace FlySim.Helpers
+	{
+	    public static class MessageHelper
+	    {
+	        public async static Task<bool> SendMessageToDeviceAsync(string message)
+	        {
+	            bool successful = false;
+	
+	            try
+	            {
+	                var serviceClient = ServiceClient.CreateFromConnectionString(Common.CoreConstants.DeviceMessagingConnectionString);
+	                var commandMessage = new Message(Encoding.ASCII.GetBytes(message.ToUpper()));
+	                await serviceClient.SendAsync("AZ3166", commandMessage);
+	                successful = true;
+	            }
+	            catch(Exception) { }
+	
+	            return successful;
+	        }
+	    }
+	}
+	```
 
-1. Finally, Locate the **SendDescendMessage** method and replace the entire method with the following block of code:
+	The ```MessageHelper``` class contains a method named ```SendMessageToDeviceAsync``` that transmits an ASCII message to the device connected to the IoT hub. The message is transmitted by calling ```SendAsync``` on an instance of the ```Microsoft.Azure.Devices.ServiceClient``` class, which is included in the NuGet package named Microsoft.Azure.Devices. A listener in the embedded code you uploaded to the device in Lab 1 handles the message and executes the appropriate commands to display the text contained in the message on the screen of the device for 5 seconds before reverting back to the normal "IN FLIGHT" display.
+
+1. In the lower-right corner of the FlySim app, there is a ComboBox control containing a list of languages. (The default is English.) The purpose of the ComboBox is to allow you to select the language used for warning messages displayed on the screen of the MXChip.
+
+	The app retrieves a list of supported languages from the [Translator Text API](https://www.microsoft.com/translator/translatorapi.aspx), which is one of more than two dozen services available in [Microsoft Cognitive Services](https://azure.microsoft.com/services/cognitive-services/). The Translator Text API can translate text from English into more than 50 different languages, including two dialects of Klingon. (Yes, Klingon!) It can also provide a list of languages it can translate to, which forms the basis for the list you see in the ComboBox control.
+
+	In order to call the Translator Text API, you must go to the Azure Portal and obtain an API key. Calls to the Translator Text API work right now because **CoreConstants.cs** contains a key that was provided for you. Before going further, you need to obtain a key of your own and replace the one in **CoreConstants.cs**.
+
+	To that end, return to the [Azure Portal](https"//portal.azure.com) and click **+ New**, followed by **AI + Cognitive Services** and **See all**.
+
+	![Adding a Cognitive Service](Images/new-translator-text-1.png)
+
+	_Adding a Cognitive Service_
+
+1. Click **More** in the "Cognitive Service" section to see a list of all Cognitive Services.
+
+	![Viewing all Cognitive Services](Images/new-translator-text-2.png)
+
+	_Viewing all Cognitive Services_
+
+1. Scroll down and click **Translator Text API**. Then click the **Create** button at the bottom of the ensuing "Translator Text API" blade.
+
+	![Selecting the Translator Text API](Images/new-translator-text-3.png)
+
+	_Selecting the Translator Text API_
+
+1. Fill in the information shown below. Then click the **Create** button.
+
+	![Creating an API key](Images/new-translator-text-4.png)
+
+	_Creating an API key_
+
+1. Return to the "FlySimResources" resource group and click **translator-text-api-key**.
+
+	![Opening the API key](Images/open-api-key.png)
+
+	_Opening the API key_
+
+1. Click **Keys** in the menu on the left. Then click the **Copy** button to the right of "KEY 1" to copy the API key to the clipboard.
+
+	![Copying the API key to the clipboard](Images/copy-api-key.png)
+
+	_Copying the API key to the clipboard_
+
+1. Return to Visual Studio. In **CoreConstants.cs**, replace the value of the field named ```TranslatorTextSubscriptionKey``` with the API key on the clipboard.
+
+1. The project already contains a class named ```TranslationHelper``` located in the "Helpers" folder. Open the file named **TranslationHelper.cs** in that folder and take a moment to examine the code. The class contains three methods. The one that translates text from one language to another is named ```GetTextTranslationAsync```. It uses the Universal Windows Platform's ```HttpClient``` class to place a REST call to the Translator Text API's HTTP endpoint with the API key embedded in an ```Ocp-Apim-Subscription-Key``` header. It is that simple to translate text when you utilize the Translator Text API.
+
+1. Return to **MainViewModel.cs** in Visual Studio and replace the ```SendWarningMessage``` method with this one:
 
 	```C#
-	private async void SendDescendMessage()
+	private async void SendWarningMessage()
     {
         string message = "Warning";
 
@@ -214,9 +361,12 @@ One of the benefits of using Azure IoT Hubs is that they support bidirectional c
         await Helpers.MessageHelper.SendMessageToDeviceAsync(message);
     }
 	```
-	This block of code will send a message to the device any time a warning is received from air traffic control.
 
-Now that your flight simulator app can listen for communciation from air traffic control, as well as communicate warning messages to your device, you're ready to start flying in "shared" air space, with other planes nearby, and potentially too close to your plane, placing your safety at risk.
+	This method calls ```TranslationHelper.GetTextTranslationAsync``` to convert the warning message to the language selected in the ComboBox (unless English is selected, in which case no translation is necessary), and then calls ```MessageHelper.SendMessageToDeviceAsync``` to send the message to the device.
+
+1. Finish up by building the solution and verifying that it builds without errors.
+
+The stage is set. The FlySim app is connected to the output from Stream Analytics so it can warn you when your airplane is too close to another. All that remains is to test it out. It's time to get back into the air. And this time, you won't be alone. 
 
 <a name="Exercise3"></a>
 ## Exercise 4: Test the finished solution ##

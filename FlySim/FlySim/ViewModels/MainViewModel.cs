@@ -52,7 +52,6 @@ namespace FlySim
 
 
         public ICommand TryCenterPlaneCommand { get; private set; }
-        public ICommand SendLanguageChangedCommand { get; private set; }
 
         public TimerHelper CurrentClock { get; set; }
 
@@ -167,10 +166,10 @@ namespace FlySim
                 : FlightStatus.Ok;
             
             if (oldStatus == FlightStatus.Ok && Status == FlightStatus.AtRisk)
-                SendDescendMessage();
+                SendWarningMessage();
         }
 
-        private async void SendDescendMessage()
+        private async void SendWarningMessage()
         {
             var message = "Warning";
 
