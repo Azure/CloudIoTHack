@@ -18,6 +18,10 @@ namespace AirTrafficSim.Listeners
         private EventHubReceiver primaryReceiver { get; set; }
         private EventHubReceiver secondaryReceiver { get; set; }
 
+        public List<NewFlightInfo> PendingFlightInfo = new List<NewFlightInfo>();
+
+        public int CurrentDelay = 1;
+
         internal bool IsConfigured
         {
             get
@@ -41,8 +45,6 @@ namespace AirTrafficSim.Listeners
         {
             while (true)
             {
-                await Task.Delay(100);
-
                 try
                 {
                     var primaryEventData = this.primaryReceiver.Receive();
@@ -57,7 +59,17 @@ namespace AirTrafficSim.Listeners
                         {
                             var flightInfo = JsonConvert.DeserializeObject<NewFlightInfo>(payload);
 
-                            App.ViewModel.UpdateFlightInformation(flightInfo);
+                            this.PendingFlightInfo.Add(flightInfo);
+
+                            if (this.PendingFlightInfo.Count > 100)
+                            {
+                                CurrentDelay = 1000;
+
+                                App.ViewModel.UpdateFlightInformation(this.PendingFlightInfo);
+
+                                this.PendingFlightInfo.Clear();
+                            }
+                            
                         }
                         catch
                         {
@@ -77,7 +89,16 @@ namespace AirTrafficSim.Listeners
                         {
                             var flightInfo = JsonConvert.DeserializeObject<NewFlightInfo>(payload);
 
-                            App.ViewModel.UpdateFlightInformation(flightInfo);
+                            this.PendingFlightInfo.Add(flightInfo);
+
+                            if (this.PendingFlightInfo.Count > 100)
+                            {
+                                CurrentDelay = 1000;
+
+                                App.ViewModel.UpdateFlightInformation(this.PendingFlightInfo);
+
+                                this.PendingFlightInfo.Clear();
+                            }
                         }
                         catch
                         {
@@ -88,6 +109,8 @@ namespace AirTrafficSim.Listeners
                 {
                     
                 }
+
+                await Task.Delay(CurrentDelay);
 
             }
 

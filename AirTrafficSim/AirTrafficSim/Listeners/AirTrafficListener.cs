@@ -1,41 +1,43 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using ppatierno.AzureSBLite.Messaging;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using FlySim.Common;
-using Newtonsoft.Json;
-using ppatierno.AzureSBLite.Messaging;
+using Windows.UI.Core;
 
-namespace FlySim.Listeners
+namespace AirTrafficSim.Listeners
 {
     public class AirTrafficListener
     {
         private EventHubClient client { get; set; }
         private EventHubConsumerGroup consumerGroup { get; set; }
         private EventHubReceiver receiver { get; set; }
-        private FlightInformation flightInformation { get; set; }
-        private ObservableCollection<ActivePlaneInformation> activePlanes { get; set; }
 
-        public async void StartListeningAsync(FlightInformation flightInformation,
-            ObservableCollection<ActivePlaneInformation> activePlanes)
+        public bool IsConfigured
         {
-            this.activePlanes = activePlanes;
-            this.flightInformation = flightInformation;
-            client = EventHubClient.CreateFromConnectionString(CoreConstants.SharedAirTrafficEventHubEndpoint,
-                CoreConstants.SharedAirTrafficHubName);
+            get
+            {
+                return Common.CoreConstants.SharedEventHubEndpoint.ToLower().Contains("endpoint=sb://");
+            }
+        }
 
-            consumerGroup = client.GetDefaultConsumerGroup();
-            receiver = consumerGroup.CreateReceiver("0", DateTime.Now.ToUniversalTime());
+        public async void StartListeningAsync()
+        {
+            this.client = EventHubClient.CreateFromConnectionString(Common.CoreConstants.SharedEventHubEndpoint, Common.CoreConstants.SharedAirTrafficHubName);
+
+            this.consumerGroup = this.client.GetDefaultConsumerGroup();
+            this.receiver = this.consumerGroup.CreateReceiver("0", DateTime.Now.ToUniversalTime());
 
             await Task.Run(() => StartListeningForTrafficCommands());
         }
 
         private async void StartListeningForTrafficCommands()
         {
-            var statusInfo = new List<PlaneStatusInformation>();
+            List<PlaneStatusInformation> statusInfo = new List<PlaneStatusInformation>();
 
             while (true)
             {
@@ -43,11 +45,11 @@ namespace FlySim.Listeners
 
                 try
                 {
-                    var eventData = receiver.Receive();
+                    var eventData = this.receiver.Receive();
 
                     if (eventData != null)
                     {
-                        var bytes = eventData.GetBytes();
+                        byte[] bytes = eventData.GetBytes();
 
                         var payload = Encoding.UTF8.GetString(bytes);
 
@@ -60,31 +62,45 @@ namespace FlySim.Listeners
                             {
                                 var status = JsonConvert.DeserializeObject<PlaneStatusInfo>(info);
 
-                                statusInfo.Add(new PlaneStatusInformation
+                                statusInfo.Add(new PlaneStatusInformation()
                                 {
-                                    DisplayName = status.deviceId,
+                                    Plane1 = status.plane1,
+                                    Plane2 = status.plane2,
                                     Distance = Convert.ToDouble(status.distance),
-                                    Timestamp = DateTime.ParseExact(status.endtime, @"yyyy-MM-dd\THH:mm:ss.fffffff\Z",
-                                        CultureInfo.InvariantCulture),
-                                    EventTime = DateTime.ParseExact(status.eventtime, @"yyyy-MM-dd\THH:mm:ss.fffffff\Z",
-                                        CultureInfo.InvariantCulture)
+
                                 });
                             }
                         }
-                        catch (Exception ex)
+                        catch
                         {
+                            
                         }
                     }
 
-                    var atRiskPlanes = from info in statusInfo
-                        where info.Distance < CoreConstants.AtRiskThreshold
-                        select info.DisplayName;
+                    List<FilteredPlaneStatusInfo> filteredStatus = new List<FilteredPlaneStatusInfo>();
 
-                    App.ViewModel.AtRiskPlanes = atRiskPlanes.Distinct().ToList();
+                    filteredStatus.AddRange(from op in statusInfo select new FilteredPlaneStatusInfo() { DisplayName = op.Plane1, Distance = op.Distance, });
+                    filteredStatus.AddRange(from op in statusInfo select new FilteredPlaneStatusInfo() { DisplayName = op.Plane2, Distance = op.Distance, });
+
+                    var orderedPlanes = filteredStatus.OrderBy(o => o.Distance).GroupBy(g => g.DisplayName);
+
+                    var finalPlaneStatus = from plane in orderedPlanes
+                                           select new
+                                           {
+                                               displayName = plane.Key,
+                                               minimumDistance = plane.First().Distance,
+                                           };
+
+                    var atRiskPlanes = (from item in finalPlaneStatus
+                                        where item.minimumDistance < Common.CoreConstants.AtRiskThreshold
+                                        select item.displayName).Distinct().ToList();
+
+                    App.ViewModel.AtRiskPlanes = atRiskPlanes;
+
+                    App.ViewModel.UpdateAllActivePlaneStatus();
                 }
-                catch
-                {
-                }
+                catch { }
+
             }
         }
     }

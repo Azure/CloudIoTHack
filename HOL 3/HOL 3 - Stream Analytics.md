@@ -6,7 +6,7 @@
 <a name="Overview"></a>
 ## Overview ##
 
-Azure Stream Analytics is a cloud-based service for ingesting high-velocity data streaming from devices, sensors, applications, Web sites, and other data sources and analyzing that data in real time. It supports a SQL-like query language that works over dynamic data streams and makes analyzing constantly changing data no more difficult than performing queries on static data stored in traditional databases. With Azure Stream Analytics, you can set up jobs that analyze incoming data for anomalies or information of interest and record the results, present notifications on dashboards, or even fire off alerts to mobile devices. And all of it can be done at low cost and with a minimum of effort.
+[Azure Stream Analytics](https://azure.microsoft.com/services/stream-analytics/) is a cloud-based service for ingesting high-velocity data streaming from devices, sensors, applications, Web sites, and other data sources and analyzing that data in real time. It supports a SQL-like query language that works over dynamic data streams and makes analyzing constantly changing data no more difficult than performing queries on static data stored in traditional databases. With Azure Stream Analytics, you can set up jobs that analyze incoming data for anomalies or information of interest and record the results, present notifications on dashboards, or even fire off alerts to mobile devices. And all of it can be done at low cost and with a minimum of effort.
 
 Scenarios for the application of real-time data analytics are legion and include fraud detection, identity-theft protection, optimizing the allocation of resources (think of an Uber-like transportation service that sends drivers to areas of increasing demand *before* that demand peaks), click-stream analysis on Web sites, shopping suggestions on retail-sales sites, and countless others. Having the ability to process data *as it comes in* rather than waiting until after it has been aggregated offers a competitive advantage to businesses that are agile enough to make adjustments on the fly.
 
@@ -33,7 +33,7 @@ Estimated time to complete this lab: **45** minutes.
 
 Azure Stream Analytics supports several types of input, including input from Azure blobs,  input from Azure Event Hubs, and input from Azure IoT Hubs. A single Azure Event Hub or IoT Hub can handle millions of events per second transmitted from devices spread throughout the world.
 
-In this exercise, you will create two Azure Event Hubs. One will provide input to Stream Analytics, while the other will receive output from Stream Analytics. In the next lab, attendees will modify the Azure function they wrote in Lab 2 to transmit data to the input Event Hub, enabling Stream Analytics to see all activity emanating from all of the simulated aircraft.
+In this exercise, you will create two Azure Event Hubs. One will provide input to Stream Analytics, while the other will receive output from Stream Analytics. In the next lab, attendees will modify the Azure Function they wrote in Lab 2 to transmit data to the input Event Hub, enabling Stream Analytics to see all activity emanating from all aircraft. They will also connect the client app to the output Event Hub and modify the app to transmit messages back to their MXChips.
 
 1. In your browser, navigate to the [Azure Portal](https://portal.azure.com). If you are asked to sign in, do so using your Microsoft account.
 
@@ -41,7 +41,7 @@ In this exercise, you will create two Azure Event Hubs. One will provide input t
 
     ![Adding a new Event Hub](Images/new-event-hub.png)
 
-    _Adding a new event hub_
+    _Adding a new Event Hub_
 
 1. Type a namespace name into the **Name** box. The name must be unique within Azure, so you will probably have to use something other than the name in the screen shot below. (A green check mark will appear in the box when the name you've entered is one that Azure will accept.) Select **Create new** under **Resource group** and enter the resource-group name "cloud-city-rg" (without quotation marks). Choose the **East US** region in the **Location** drop-down, and then click the **Create** button.
 
@@ -67,31 +67,31 @@ In this exercise, you will create two Azure Event Hubs. One will provide input t
 
     ![Adding an Event Hub](Images/add-event-hub.png)
 
-    _Adding an event hub_
+    _Adding an Event Hub_
 
 1. Type "flysim-shared-input-hub" (without quotation marks) into the **Name** box. Then click the **Create** button.
 
     ![Creating an Event Hub](Images/create-input-hub.png)
 
-    _Creating an event hub_
+    _Creating an Event Hub_
 
 1. Wait a moment for the Event Hub to be created. Then click **+ Event Hub** again.
 
     ![Adding an Event Hub](Images/add-event-hub.png)
 
-    _Adding an event hub_
+    _Adding an Event Hub_
 
 1. Type "flysim-shared-output-hub" (without quotation marks) into the **Name** box. Then click the **Create** button.
 
     ![Creating an Event Hub](Images/create-output-hub.png)
 
-    _Creating an event hub_
+    _Creating an Event Hub_
 
 1. Wait a moment for the Event Hub to be created. Then scroll to the bottom of the blade and confirm that both Event Hubs appear in the list of Event Hubs.
 
-    ![Event hubs created for input and output](Images/event-hubs.png)
+    ![Event Hubs created for input and output](Images/event-hubs.png)
 
-    _Event hubs created for input and output_
+    _Event Hubs created for input and output_
 
 1. Click **Shared access policies**, followed by **RootManageSharedAccessKey**.
 
@@ -105,7 +105,7 @@ In this exercise, you will create two Azure Event Hubs. One will provide input t
 
     _Copying the connection string_
 
-1. Paste the connection string on the clipboard into a text file and **save the text file so you can easily retrieve the connection in the next lab and later during this lab**.
+1. Paste the connection string on the clipboard into a text file and **save the text file so you can easily retrieve it at the end of this lab**.
 
 You have created a pair of Event Hubs: one to provide input to Stream Analytics, and another to receive output from Stream Analytics. The next step is to create the Stream Analytics job itself.
 
@@ -270,9 +270,9 @@ Now it's time to connect the ATC app, which is located in the "AirTrafficSim" fo
 
 1. Right-click the AirTrafficSim solution in Solution Explorer and select **Restore NuGet Packages** to load all the dependencies.
 
-1. Open **CoreConstants.cs** in the project's "Common" folder. Replace "SHARED_EVENT_HUB_ENDPOINT" with the connection string you saved in Exercise 1, Step 13. Then save the file.
+1. Open **CoreConstants.cs** in the project's "Common" folder. Replace "SHARED_EVENT_HUB_ENDPOINT" on line 11 with the connection string you saved in Exercise 1, Step 13. Then save the file.
 
-1. Press **Ctrl+F5** to launch the app. After a short delay, AirTrafficSim will load and display an empty air traffic control map somewhere over the Nevada desert. The flight-information panel (A) shows the number of aircraft that are flying and indicates how many are "safe" and how many are at risk (within two miles of each other). The Altitudes panel (B) shows the altitudes of the aircrafts. The traffic map (C) shows where the aircraft are, and the status bar (D) shows the current time and provides controls for zooming out to show all active flights and zooming back to the original grid coordinates. You may also zoom in and out by placing the cursor over the map and rolling the mouse wheel, or pan by dragging the map.
+1. Press **Ctrl+F5** to launch the app. After a short delay, AirTrafficSim will load and display an empty air traffic control map somewhere over the Nevada desert. The flight-information panel (A) shows the number of aircraft that are flying and indicates how many are "safe" and how many are "at risk" (within two miles of each other). The Altitudes panel (B) shows the altitudes of the aircrafts. The traffic map (C) shows where the aircraft are, and the status bar (D) shows the current time and provides controls for zooming out to show all active flights and zooming back to the original grid coordinates. You may also zoom in and out by placing the cursor over the map and rolling the mouse wheel, or pan by dragging the map.
 
 	![The AirTrafficSim app](Images/app-environment-labels.png)
 

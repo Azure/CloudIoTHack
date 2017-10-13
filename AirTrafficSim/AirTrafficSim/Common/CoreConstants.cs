@@ -8,8 +8,7 @@ namespace AirTrafficSim.Common
 {
     public class CoreConstants
     {   
-        public const string SharedEventHubEndpoint = "EVENT_HUB_ENDPOINT";
-
+        public const string SharedEventHubEndpoint = "SHARED_EVENT_HUB_ENDPOINT";
         public const string SharedFlightActivityHubName = "flysim-shared-input-hub";
         public const string SharedAirTrafficHubName = "flysim-shared-output-hub";
         
