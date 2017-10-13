@@ -8,7 +8,7 @@
 
 In the previous session, your flight instructor created an [Azure Stream Analytics](https://azure.microsoft.com/services/stream-analytics/) job that analyzes incoming data for aircraft that are too close together. He or she also created a pair of Event Hubs: one to provide input to the Stream Analytics job, and another to receive output.
 
-In this lab, you will close the loop by marrying what you built in Labs 1 and 2 with what the instructor built in Lab 3 to assemble a complete end-to-end solution. First, you will modify the Azure function you wrote in Lab 2 to transmit flight data to the shared input hub — the one that provides input to Stream Analytics — so Stream Analytics *and* the ATC app presented at the end of the previous session can see all of the aircrafts in the room.
+In this lab, you will close the loop by marrying what you built in Labs 1 and 2 with what the instructor built in Lab 3 to assemble a complete end-to-end solution. First, you will modify the Azure Function you wrote in Lab 2 to transmit flight data to the shared input hub — the one that provides input to Stream Analytics — so Stream Analytics *and* the ATC app presented at the end of the previous session can see all of the aircraft in the room.
 
 ![](Images/atc-planes-in-flight.png)
 
@@ -36,19 +36,19 @@ The following are required to complete this lab:
 
 This lab includes the following exercises:
 
-- [Exercise 1: Update the Azure Function to connect to a “shared” Event Hub](#Exercise1)
-- [Exercise 2: Update the flight simulator app to connect to a “shared” Stream Analytics job](#Exercise2)
-- [Exercise 3: Update the flight simulator app to send messages to an IoT device](#Exercise3)
-- [Exercise 4: Practice flying in shared air space](#Exercise4)
+- [Exercise 1: Connect the Azure Function to the shared input hub](#Exercise1)
+- [Exercise 2: Connect the client app to the shared output hub](#Exercise2)
+- [Exercise 3: Update the client app to talk back to the device](#Exercise3)
+- [Exercise 4: Fly an airplane through shared air space](#Exercise4)
  
 Estimated time to complete this lab: **60** minutes.
 
 <a name="Exercise1"></a>
-## Exercise 1: Update the Azure Function to connect to a “shared” Event Hub ##
+## Exercise 1: Connect the Azure Function to the shared input hub ##
 
-In order to send local flight information to air traffic control you will need to make a few changes to code created previously. In this exercise, you will be updating the Azure Function you creating in Lab 2 to connect to a "shared" Event Hub.
+In Lab 2, you deployed an Azure Function that reads input from an IoT hub, transforms accelerometer data coming from your MXChip into flight data, and transmits the output to an event hub that provides input to the FlySim app. In this exercise, you will add an output to the Azure Function so that it transmits the same flight data to the shared input hub created by the instructor in Lab 3. Because everyone else in the room is making the same modification, and because the shared input hub provides data to the ATC app and to Stream Analytics, the ATC app will be able to show all the aircraft that are in the air, and the Stream Analytics job will be able to detect when aircraft come too close together.   
 
-1. In Visual Studio 2017, open the **FlySimFunctions** project created and deployed in Lab 2, Exercise 3.
+1. Open the FlySimFunctions solution that you created in Lab 2 in Visual Studio.
 
 1. Open **FlySimIotFlightData.cs** and scroll to view the function **Run** method on **line 23**, and locate the ```TraceWriter log``` parameter at the end of the parameter list.
 
@@ -114,59 +114,50 @@ In order to send local flight information to air traffic control you will need t
  
 	>If you believe you have configured your function correctly, but do not see any entries in the log output, try disconnecting and re-connecting the Micro USB cable on your device one more time. This will effectively reset the device and re-initiate communication with the IoT Hub.
 
-Your Azure Function has now been updated to send flight information to the "shared" Event Hub, ensuring air traffic control will be aware of your plane's current location at all times. With these updates in place it's time to add the ability to listen to air traffic control commands in the FlySim client app.
+The Azure Function has now been updated to send flight information to the shared event hub, enabling air-traffic control to be aware of your plane's current location. Now it's time to connect the event hub that receives output from Stream Analytics to the client app so the client app can be notified that your airplane is too close to another — and can respond accordingly.
 
 <a name="Exercise2"></a>
-## Exercise 2: Update the flight simulator app to connect to a “shared” Stream Analytics job ##
+## Exercise 2: Connect the client app to the shared output hub ##
 
-In order to listen for commands from air traffic control, you will need to make a few changes to the FlySim client app created in Lab 2. 
+In Lab 3, the instructor created an event hub and configured Stream Analytics to send output to it. He or she also connected the ATC app to the event hub so the ATC app could highlight planes that are too close together on the air-traffic control map. In this exercise, you will connect the client app to the same event hub so it can notify individual pilots when the distance between their aircraft and any other is less than two miles.
 
-In this exercise, you will be updating FlySim to connect to a “shared” Stream Analytics job used by air traffic control.
+1. Open the FlySim solution from Lab 2 in Visual Studio.
 
-1. In Visual Studio 2017, close the **FlySimFunctions** solution, then use the **File** > **Open** > **Project/Solution** command to open the **FlySim** project created in Lab 2, Exercise 4.
-
-1. In Solution Explorer, open **CoreConstants.cs** in the **Common** folder, and locate the **FlightActivityEventHubEndpoint** constant.
-
-1. Insert the following code directly below the "FlightActivityEventHubEndpoint" constant.
+1. Open **CoreConstants.cs** in the "Common" folder, and add the following statements after the statements that define static strings named ```FlightActivityEventHubEndpoint``` and ```FlightActivityEventHubName```:
 
 	```C#
 	public static string SharedAirTrafficEventHubEndpoint = "SHARED_EVENT_HUB_ENDPOINT";
     public static string SharedAirTrafficHubName = "flysim-shared-output-hub";
 	```
-1. Open a browser and navigate to [http://bit.ly/FlySimConfig](http://bit.ly/FlySimConfig "http://bit.ly/FlySimConfig") to view the shared configuration settings for your current training session.
 
-1. Click the **copy icon** to the left if the "SharedAirTrafficHubEndpoint" value to copy the endpoint connection string to the clipboard.
+1. Navigate to [http://bit.ly/FlySimConfig](http://bit.ly/FlySimConfig) in your browser and click the **Copy** button to the right of "SharedAirTrafficHubEndpoint" to copy the connection string for the shared output hub to the clipboard.
 	
-	![Copying the SharedEventHubConnection value to the clipboard](Images/web-click-copy-for-app.png)
-    _Copying the SharedEventHubConnection value to the clipboard_
+	![Copying the connection string to the clipboard](Images/web-click-copy-for-app.png)
 
-1. Replace the value "SHARED_EVENT_HUB_ENDPOINT" with the **EventHubConnection endpoint connection string** you used in the previous exercise (when adding keys and values to the function Application Settings.) If you are uncertain of this value you can refer to Exercise 3, Step 11 for instructions.
+    _Copying the connection string to the clipboard_
 
-1. Back in Visual Studio 2017, paste to replace the value "SHARED_EVENT_HUB_ENDPOINT" with the value from the clipboard. 
+1. Return to Visual Studio and replace "SHARED_EVENT_HUB_ENDPOINT" with the value on the clipboard. 
 
-	![An updated SharedAirTrafficHubEndpoint in CoreConstants.cs](Images/vs-updated-atc-endpoint.png)
-    _An updated SharedAirTrafficHubEndpoint in CoreConstants.cs_
- 
-	With FlySim connected to the shared Azure Event Hub you're ready to start testing by making sure the client app is "listening" for communication from air traffic control.
+1. In Solution Explorer, right-click the "Listeners" folder and use the **Add** > **Existing Item...** command to add the **AirTrafficListener.cs** file from the "Resources" folder accompanying this lab to the project.
 
-1. In Solution Explorer, right-click the **Listeners** folder, use the **Add** > **Existing Item...** command to add the **AirTrafficListener.cs** file from the **Resources** folder included in this lab.
-
-1. Still in Solution Explorer, open **ViewModels** > **MainViewModel.cs** and insert the following line of code directly below the "FlightActivityListener" property on line 39:
+1. Still in Solution Explorer, open **MainViewModel.cs** in the "ViewModels" folder and insert the following line of code directly below the ```FlightActivityListener``` property on line 39:
 
 	```C#
 	public AirTrafficListener AirTrafficListener = new AirTrafficListener();
 	```
-1. Still in **MainViewModel.cs**, locate the **InitializeSystem** method and insert the following line of code into the method: 
+
+1. Still in **MainViewModel.cs**, locate the ```InitializeSystem``` method and add the following line of code to it: 
 
 	```C#
 	this.AirTrafficListener.StartListeningAsync(this.CurrentFlightInformation, this.ActivePlanes);
 	```
-1. Right-click the **FlySim** solution and use the **Build** > **Rebuild Solution** command to ensure your changes compile successfully.
+
+1. Rebuild the solution and confirm that your changes compile successfully.
  
 Your flight simulator app is now ready to listen for communication from air traffic control. This will be important in the next exercises as you practice flying while sharing air space with other pilots.
 
 <a name="Exercise3"></a>
-## Exercise 3: Update the flight simulator app to send messages to an IoT device ##
+## Exercise 3: Update the client app to talk back to the device ##
 
 When warning commands are received from air traffic control, your flight simulator app will need to communicate these messages to your MXChip IoT DevKit device. 
 
@@ -232,7 +223,7 @@ In this exercise, you will be updating FlySim to connect to send messages to you
 Now that your flight simulator app can listen for communciation from air traffic control, as well as communicate warning messages to your device, you're ready to start flying in "shared" air space, with other planes nearby, and potentially too close to your plane, placing your safety at risk.
 
 <a name="Exercise3"></a>
-## Exercise 4: Practice flying in shared air space ##
+## Exercise 4: Fly an airplane through shared air space ##
 	
 Now comes all the fun, and this will be a great introduction into this exercise.
 
