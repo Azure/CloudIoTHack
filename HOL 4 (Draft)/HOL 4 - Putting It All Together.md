@@ -108,33 +108,37 @@ In Lab 2, you deployed an Azure Function that reads input from an IoT hub, trans
 
     _Adding an application setting_
 
+1. Connect your MXChip to your laptop if it isn't already connected. Confirm that it's sending data by watching for "IN FLIGHT" to appear on the screen of the device. Then turn to the ATC app on the screen at the front of the room and watch for your airplane to appear. If necessary, ask the instructor to zoom out so that all aircraft are visible. Seeing your airplane on the big screen is confirmation that you did everything correctly in this exercise.
+
+	> If your airplane doesn't show up on the big screen, go to the Azure Function in the portal and check the output log to make sure it's sending and receiving data. If it is, double-check the connection string you added in Step 9 and make sure its value is the one you retrieved from the FlySim configuration portal in Step 5.
+
 The Azure Function has now been updated to send flight information to the shared input hub, enabling air-traffic control to be aware of your plane's location. Now it's time to connect the Event Hub that receives output from Stream Analytics to the client app so the client app can be notified when your airplane is too close to another and can respond accordingly.
 
 <a name="Exercise2"></a>
 ## Exercise 2: Connect the client app to the shared output hub ##
 
-In Lab 3, the instructor created an event hub and configured Stream Analytics to send output to it. He or she also connected the ATC app to the event hub so the ATC app could highlight planes that are too close together on the air-traffic control map. In this exercise, you will connect the client app to the same event hub so it can notify individual pilots when the distance between their aircraft and any other is less than two miles.
+In Lab 3, the instructor created an Event Hub and configured Stream Analytics to send output to it. He or she also connected the ATC app to the Event Hub so the app could highlight planes that are too close together on the air-traffic control map. In this exercise, you will connect the FlySim client app to the same Event Hub so it can notify individual pilots when the distance between their aircraft and any other is less than two miles.
 
 1. Open the FlySim solution from Lab 2 in Visual Studio.
 
-1. Open **CoreConstants.cs** in the "Common" folder, and add the following statements after the statements that define static strings named ```FlightActivityEventHubEndpoint``` and ```FlightActivityEventHubName```:
+1. Open **CoreConstants.cs** in the "Common" folder, and add the following statements after the statements that declare static strings named ```FlightActivityEventHubEndpoint``` and ```FlightActivityEventHubName```:
 
 	```C#
 	public static string SharedAirTrafficEventHubEndpoint = "SHARED_EVENT_HUB_ENDPOINT";
     public static string SharedAirTrafficHubName = "flysim-shared-output-hub";
 	```
 
-1. Navigate to [http://bit.ly/FlySimConfig](http://bit.ly/FlySimConfig) in your browser and click the **Copy** button to the right of "SharedAirTrafficHubEndpoint" to copy the connection string for the shared output hub to the clipboard.
-	
-	![Copying the connection string to the clipboard](Images/web-click-copy-for-app.png)
+1. Navigate to http://bit.ly/FlySimConfig in your browser and click the **Copy** button next to "SharedAirTrafficEventHubEndpoint" to copy the connection string for the shared output hub — the one that receives output from Stream Analytics — to the clipboard.
+
+	![Copying the connection string to the clipboard](Images/copy-connection-string-2.png)
 
     _Copying the connection string to the clipboard_
 
-1. Return to Visual Studio and replace "SHARED_EVENT_HUB_ENDPOINT" with the value on the clipboard. 
+1. Return to Visual Studio and replace "SHARED_EVENT_HUB_ENDPOINT" in **CoreConstants.cs** with the value on the clipboard. 
 
 1. In Solution Explorer, right-click the "Listeners" folder and use the **Add** > **Existing Item...** command to add the **AirTrafficListener.cs** file from the "Resources" folder accompanying this lab to the project.
 
-1. Still in Solution Explorer, open **MainViewModel.cs** in the "ViewModels" folder and insert the following line of code directly below the ```FlightActivityListener``` property on line 39:
+1. Open **MainViewModel.cs** in the project's "ViewModels" folder and insert the following line of code below the ```FlightActivityListener``` property on line 40:
 
 	```C#
 	public AirTrafficListener AirTrafficListener = new AirTrafficListener();
@@ -148,7 +152,7 @@ In Lab 3, the instructor created an event hub and configured Stream Analytics to
 
 1. Rebuild the solution and confirm that your changes compile successfully.
  
-Your flight simulator app is now ready to listen for communication from air traffic control. This will be important in the next exercises as you practice flying while sharing air space with other pilots.
+FlySim now has the smarts to turn your airplane red if it receives information from the shared output hub indicating that it's within two miles of another plane. But don't run it just yet. Let's further enhance the app to display a warning on the screen of the MXChip when your plane is too close to another.
 
 <a name="Exercise3"></a>
 ## Exercise 3: Update the client app to talk back to the device ##
