@@ -16,7 +16,7 @@ Second, you will connect the client app that you built in Lab 2 to the shared ou
 
 Third, you will modify the client app so that when it is notified that your aircraft is too close to another, it transmits a warning message back to the MXChip through the IoT Hub that the device is connected to. The MXChip will respond by displaying the warning on its screen. To top it off, you will use [Microsoft Cognitive Services](https://azure.microsoft.com/services/cognitive-services/) to translate the warning message into the language of the user's choice.
 
-Finally, you will join with others in the room to fly through a crowded air-traffic control sector, and see all the different pieces of the solution work together to analyze large volumes of data in real time and help ensure that everyone arrives safely at their destination.
+Finally, you will join with others in the room to fly through a crowded air-traffic control sector, and see all the different pieces of the solution work together to analyze large volumes of data in real time and help ensure that all planes arrive safely at their destinations.
 
 <a name="Prerequisites"></a>
 ### Prerequisites ###
@@ -46,75 +46,69 @@ Estimated time to complete this lab: **60** minutes.
 <a name="Exercise1"></a>
 ## Exercise 1: Connect the Azure Function to the shared input hub ##
 
-In Lab 2, you deployed an Azure Function that reads input from an IoT hub, transforms accelerometer data coming from your MXChip into flight data, and transmits the output to an event hub that provides input to the FlySim app. In this exercise, you will add an output to the Azure Function so that it transmits the same flight data to the shared input hub created by the instructor in Lab 3. Because everyone else in the room is making the same modification, and because the shared input hub provides data to the ATC app and to Stream Analytics, the ATC app will be able to show all the aircraft that are in the air, and the Stream Analytics job will be able to detect when aircraft come too close together.   
+In Lab 2, you deployed an Azure Function that reads input from an IoT hub, transforms accelerometer data coming from your MXChip into flight data, and transmits the output to an Azure Event Hub that provides input to the FlySim app. In this exercise, you will add an output to the Azure Function so that it transmits the same flight data to the shared input hub created by the instructor in Lab 3. Because everyone else in the room is making the same modification, and because the shared input hub provides data to the ATC app and to Stream Analytics, the ATC app will be able to show all the aircraft that are in the air, and the Stream Analytics job will be able to detect when aircraft come too close together.   
 
-1. Open the FlySimFunctions solution that you created in Lab 2 in Visual Studio.
+1. Start Visual Studio and open the FlySimFunctions solution that you created in Lab 2.
 
-1. Open **FlySimIotFlightData.cs** and scroll to view the function **Run** method on **line 23**, and locate the ```TraceWriter log``` parameter at the end of the parameter list.
-
-	![Locating TraceWriter log in the Run method parameters](Images/function-trace-writer.png)
-    _Locating TraceWriter log in the Run method parameters_
-
-
-1. Add a new parameter to the ```Run``` method by insert the following code directly before the ```TraceWriter log``` parameter, making certain to **include the trailing comma**.
+1. Add the following parameter to the ```Run``` method:
 
 	```C#
 	[EventHub("sharedouteventhub", Connection = "SharedEventHubConnection")] IAsyncCollector<string> sharedOutputMessage,
 	```
 
-1. To additional send data to the shared Event Hub, insert the following line of code directly below ```await outputMessage.AddAsync(outputPayload);``` the on **line 84**:
+	The modified method signature should look like this:
+
+	![The modified Run method](Images/modified-function-1.png)
+
+    _The modified Run method_
+
+	The ```sharedOutputMessage``` parameter that you added represents output messages to the shared Event Hub.
+
+1. Scroll down to the end of the ```Run``` method and add the following statement, just after the statement that calls ```outputMessage.AddAsync()``` and before the call to ```log.Info()```:
 
 	```C#
 	await sharedOutputMessage.AddAsync(outputPayload);
 	```
 
-1. Open **local.settings.json** and insert the following new value directly below the  "EventHubConnection" value, again making certain to **include the trailing comma**:
+	The last four lines of the method should now look like this:
+
+	![The modified Run method](Images/modified-function-2.png)
+
+    _The modified Run method_
+
+	The statement that you added transmits the same flight data to the shared Event Hub that is already being transmitted to the "private" Event Hub you created in Lab 2.
+
+1. Open **local.settings.json** and insert the following statement directly below   "EventHubConnection:"
 
 	```Json
 	 "SharedEventHubConnection": "SHARED_EVENT_HUB_ENDPOINT",
 	```
-	The Azure Function app will require the value of the "SharedEventHubConnection" connection string to be updated before deploying your function:
- 
-1. Open a browser and navigate to [http://bit.ly/FlySimConfig](http://bit.ly/FlySimConfig "http://bit.ly/FlySimConfig") to view the shared configuration settings for your current training session.
 
-1. Click the **copy icon** to the left if the "SharedEventHubConnection" value to copy the endpoint connection string to the clipboard.
+1. Navigate to http://bit.ly/FlySimConfig in your browser and click the **Copy** button next to "SharedEventHubConnection" to copy the connection string for the shared input hub — the one that provides input to Stream Analytics — to the clipboard.
+
+	> Where did the connection string come from? When your instructor ran the AirTrafficSim app at the end of the previous lab, the app uploaded the connection string to the Web site.
 	
-	![Copying the SharedEventHubConnection value to the clipboard](Images/web-click-copy-for-function.png)
-    _Copying the SharedEventHubConnection value to the clipboard_
+	![Copying the connection string to the clipboard](Images/copy-connection-string-1.png)
 
-1. Back in Visual Studio 2017, paste to replace the value "SHARED_EVENT_HUB_ENDPOINT" in **local.settings.json** with the value from the clipboard. 
+    _Copying the connection string to the clipboard_
 
-1. In Solution Explorer, right-click the **FlySimFunctions** project  use the **Build** > **Rebuild Solution** command to ensure your function compiles successfully.
+1. Return to Visual Studio and replace "SHARED_EVENT_HUB_ENDPOINT" in **local.settings.json** with the value on the clipboard. 
 
-1. Still in Solution Explorer, right-click the **FlySimFunctions** project once more and select **Publish...**, then click **Publish** to publish your updated function to the Azure portal.
+1. Save your changes and rebuild the solution to ensure that it builds successfully. Then right-click the project in Solution Explorer and use the **Publish...** command to publish the updated Azure Function.
 
-1. After a short delay, a status of "Publish Succeeded" will appear at the bottom of the Visual Studio Output window, which means your Azure Function has now been deployed successfully as an Azure App Service.
-  
-	With your function updated with a new configration value, your need to make sure the local settings used in your Visual Studio environment get updated in the Azure portal.
+1. The next step is to add the shared input hub's connection string to the Function App's application settings. Go to the Azure Portal and open the Function App that you published in Lab 2. Then click **Application settings**.
 
-1. Unplug the **Micro USB cable** from your MXChip IoT DevKit device.
+	![Opening application settings](Images/open-application-settings.png)
 
-1. In the Azure portal, navigate to **FlySimResources** and select the new Function App (such as "FlySimFunctions0001") you published in the previous steps.
+	_Opening application settings_
 
-1. On the Function Apps "Overview" tab, click **Application Settings**.
- 
-1. Scroll to the "Application settings" section at the bottom of the screen, and add the following keys and values to match your development environment.
-	
-	- Add key: **SharedEventHubConnection**
-	- Add value: Copy and paste in the endpoint connection string value of the **SharedEventHubConnection** key from **local.settings.json**
+1. Click **+ Add new setting** in the "Application settings" section. Add a setting named "SharedEventHubConnection" and set its value equal to the connection string that's on the clipboard. (If the connection string is no longer on the clipboard, you can return to http://bit.ly/FlySimConfig and copy it from there.) When you're finished, click **Save** at the top of the blade.
 
-1. Scroll to the top of the "Application Settings" tab and click **Save** to allow your function to begin using these new values.
+	![Adding an application setting](Images/new-application-setting.png)
 
-1. Plug the **Micro USB cable** back into your MXChip IoT DevKit device, and wait for the device to initialize and begin displaying "IN FLIGHT" values.
+    _Adding an application setting_
 
-1. Back in the Azure portal, select the **FlySimIoTFlightData** function from the left-navigation, expand the **Logs** panel at the bottom, and confirm the function is receiving and sending data.
-
-	![The FlySimIoTFlightData function running in the portal](Images/portal-function-running.png)
-    _The FlySimIoTFlightData function running in the portal_
- 
-	>If you believe you have configured your function correctly, but do not see any entries in the log output, try disconnecting and re-connecting the Micro USB cable on your device one more time. This will effectively reset the device and re-initiate communication with the IoT Hub.
-
-The Azure Function has now been updated to send flight information to the shared event hub, enabling air-traffic control to be aware of your plane's current location. Now it's time to connect the event hub that receives output from Stream Analytics to the client app so the client app can be notified that your airplane is too close to another — and can respond accordingly.
+The Azure Function has now been updated to send flight information to the shared input hub, enabling air-traffic control to be aware of your plane's location. Now it's time to connect the Event Hub that receives output from Stream Analytics to the client app so the client app can be notified when your airplane is too close to another and can respond accordingly.
 
 <a name="Exercise2"></a>
 ## Exercise 2: Connect the client app to the shared output hub ##
