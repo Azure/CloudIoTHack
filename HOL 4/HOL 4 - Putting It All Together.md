@@ -12,7 +12,7 @@ In this lab, you will close the loop by marrying what you built in Labs 1 and 2 
 
 ![The ATC app showing several planes in flight](Images/atc-planes-in-flight.png)
 
-_TODO: Update this image_
+_The ATC app showing several planes in flight_
 
 Second, you will connect the client app that you built in Lab 2 to the shared output hub — the one that receives output from Stream Analytics — so that when your aircraft comes too close to another and turns red in the ATC app, it turns red in the client app, too.
 
