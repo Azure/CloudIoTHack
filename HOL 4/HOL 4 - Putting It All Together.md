@@ -16,7 +16,7 @@ _The ATC app showing several planes in flight_
 
 Second, you will connect the client app that you built in Lab 2 to the shared output hub — the one that receives output from Stream Analytics — so that when your aircraft comes too close to another and turns red in the ATC app, it turns red in the client app, too.
 
-Third, you will modify the client app so that when it is notified that your aircraft is too close to another, it transmits a warning message back to the MXChip through the IoT Hub that the device is connected to. The MXChip will respond by displaying the warning on its screen. To top it off, you will use [Microsoft Cognitive Services](https://azure.microsoft.com/services/cognitive-services/) to translate the warning message into the language of the user's choice.
+Third, you will modify the client app so that when it is notified that your aircraft is too close to another, it transmits a warning message back to the MXChip through the IoT Hub that the device is connected to. The MXChip will respond by displaying the warning on its screen and lighting an LED. To top it off, you will use [Microsoft Cognitive Services](https://azure.microsoft.com/services/cognitive-services/) to translate the warning message into the language of the user's choice.
 
 Finally, you will join with others in the room to fly through a crowded air-traffic control sector, and see all the different pieces of the solution work together to analyze large volumes of data in real time and help ensure that all planes arrive safely at their destinations.
 
@@ -409,9 +409,9 @@ In this exercise, you will join other pilots in the room to fly your airplane th
 
 1. At the same time, check your MXChip. Confirm that the red LED lights up, and that the screen displays a warning message in the language selected in Step 3. The message disappears after 5 seconds, so if you miss it, circle around and aim for another close encounter.
 
-	![Warning message displayed by the MXChip](Images/tk.png)
+	![Warning messages displayed in English, French, and Polish](Images/warning-messages.png)
 
-	_TODO: Add image_
+	_Warning messages displayed in English, French, and Polish_
 
 1. Continue flying until you're comfortable that your app — and your device — are working as expected.
 
