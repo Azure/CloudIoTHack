@@ -10,7 +10,7 @@ In the previous session, your flight instructor created an [Azure Stream Analyti
 
 In this lab, you will close the loop by marrying what you built in Labs 1 and 2 with what the instructor built in Lab 3 to assemble a complete end-to-end solution. First, you will modify the Azure Function you wrote in Lab 2 to transmit flight data to the shared input hub — the one that provides input to Stream Analytics — so Stream Analytics *and* the ATC app presented at the end of the previous session can see all of the aircraft in the room.
 
-![The ATC app showing several planes in flight](Images/atc-planes-in-flight.png)
+![The ATC app showing several planes in flight](Images/atc-app.png)
 
 _The ATC app showing several planes in flight_
 
@@ -397,15 +397,15 @@ In this exercise, you will join other pilots in the room to fly your airplane th
 
 1. Turn to the ATC app running on the big screen in the front of the room and find your airplane. Navigate toward an airplane near you and try to get within two miles of it. Pay attention to the altitude of the two aircraft, because if one is at 10,000 feet and the other is at 30,000, they won't turn red even if their flight paths cross. Remember that you can control your altitude by tilting your MXChip forward (down) and backward (up).
 
-	![Two airplanes approaching each other](Images/tk.png)
+	![Two airplanes approaching each other](Images/two-approaching.png)
 
-	_TODO: Add image_
+	_Two airplanes approaching each other_
 
 1. When you get within two miles of another aircraft, confirm that your airplane turns red in the client app AND in the ATC app.
 
-	![Two airplanes within two miles of each other](Images/tk.png)
+	![Two airplanes within two miles of each other](Images/two-at-risk.png)
 
-	_TODO: Add image_
+	_Two airplanes within two miles of each other_
 
 1. At the same time, check your MXChip. Confirm that the red LED lights up, and that the screen displays a warning message in the language selected in Step 3. The message disappears after 5 seconds, so if you miss it, circle around and aim for another close encounter.
 

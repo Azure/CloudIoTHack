@@ -15,7 +15,8 @@ namespace AirTrafficSim.Listeners
     {
         private EventHubClient client { get; set; }
         private EventHubConsumerGroup consumerGroup { get; set; }
-        private EventHubReceiver receiver { get; set; }
+        private EventHubReceiver primaryReceiver { get; set; }
+        private EventHubReceiver secondaryReceiver { get; set; }
 
         public bool IsConfigured
         {
@@ -30,7 +31,8 @@ namespace AirTrafficSim.Listeners
             this.client = EventHubClient.CreateFromConnectionString(Common.CoreConstants.SharedEventHubEndpoint, Common.CoreConstants.SharedAirTrafficHubName);
 
             this.consumerGroup = this.client.GetDefaultConsumerGroup();
-            this.receiver = this.consumerGroup.CreateReceiver("0", DateTime.Now.ToUniversalTime());
+            this.primaryReceiver = this.consumerGroup.CreateReceiver("0", DateTime.Now.ToUniversalTime());
+            this.secondaryReceiver = this.consumerGroup.CreateReceiver("1", DateTime.Now.ToUniversalTime());
 
             await Task.Run(() => StartListeningForTrafficCommands());
         }
@@ -45,11 +47,11 @@ namespace AirTrafficSim.Listeners
 
                 try
                 {
-                    var eventData = this.receiver.Receive();
+                    var primaryEventData = this.primaryReceiver.Receive();
 
-                    if (eventData != null)
+                    if (primaryEventData != null)
                     {
-                        byte[] bytes = eventData.GetBytes();
+                        byte[] bytes = primaryEventData.GetBytes();
 
                         var payload = Encoding.UTF8.GetString(bytes);
 
@@ -77,6 +79,38 @@ namespace AirTrafficSim.Listeners
                         }
                     }
 
+                    var secondaryEventData = this.primaryReceiver.Receive();
+
+                    if (secondaryEventData != null)
+                    {
+                        byte[] bytes = secondaryEventData.GetBytes();
+
+                        var payload = Encoding.UTF8.GetString(bytes);
+
+                        statusInfo.Clear();
+
+                        try
+                        {
+                            foreach (var info in payload.Split("\r\n".ToCharArray(),
+                                StringSplitOptions.RemoveEmptyEntries))
+                            {
+                                var status = JsonConvert.DeserializeObject<PlaneStatusInfo>(info);
+
+                                statusInfo.Add(new PlaneStatusInformation()
+                                {
+                                    Plane1 = status.plane1,
+                                    Plane2 = status.plane2,
+                                    Distance = Convert.ToDouble(status.distance),
+
+                                });
+                            }
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+
                     List<FilteredPlaneStatusInfo> filteredStatus = new List<FilteredPlaneStatusInfo>();
 
                     filteredStatus.AddRange(from op in statusInfo select new FilteredPlaneStatusInfo() { DisplayName = op.Plane1, Distance = op.Distance, });
@@ -96,8 +130,6 @@ namespace AirTrafficSim.Listeners
                                         select item.displayName).Distinct().ToList();
 
                     App.ViewModel.AtRiskPlanes = atRiskPlanes;
-
-                    App.ViewModel.UpdateAllActivePlaneStatus();
                 }
                 catch { }
 
