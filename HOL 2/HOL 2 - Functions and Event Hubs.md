@@ -463,3 +463,7 @@ If you are curious to know how FlySim subscribes to events from the Event Hub, c
 You can now fly a simulated aircraft using the MXChip that you configured in Lab 1. An Azure Function transforms accelerometer data from the MXChip into flight data, the flight data is transmitted to an Azure Event Hub, and a client app subscribes to events from the Event Hub so it can show the aircraft's position and attitude in real time.
 
 In Lab 3, you can sit back and relax while the instructor does the work. The goal is to add Azure Stream Analytics to the mix so it can see all the aircraft in the room, determine when two aircraft are too close together, and transmit a warning to affected pilots. It's about to get very real — and also very intense!
+
+---
+
+Copyright 2017 Microsoft Corporation. All rights reserved. Except where otherwise noted, these materials are licensed under the terms of the MIT License. You may use them according to the license as is most appropriate for your project. The terms of this license can be found at https://opensource.org/licenses/MIT.

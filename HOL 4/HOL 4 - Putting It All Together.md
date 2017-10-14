@@ -10,7 +10,9 @@ In the previous session, your flight instructor created an [Azure Stream Analyti
 
 In this lab, you will close the loop by marrying what you built in Labs 1 and 2 with what the instructor built in Lab 3 to assemble a complete end-to-end solution. First, you will modify the Azure Function you wrote in Lab 2 to transmit flight data to the shared input hub — the one that provides input to Stream Analytics — so Stream Analytics *and* the ATC app presented at the end of the previous session can see all of the aircraft in the room.
 
-![](Images/atc-planes-in-flight.png)
+![The ATC app showing several planes in flight](Images/atc-planes-in-flight.png)
+
+_TODO: Update this image_
 
 Second, you will connect the client app that you built in Lab 2 to the shared output hub — the one that receives output from Stream Analytics — so that when your aircraft comes too close to another and turns red in the ATC app, it turns red in the client app, too.
 
@@ -298,7 +300,7 @@ One of the benefits of using Azure IoT Hubs is that they support bidirectional c
 	}
 	```
 
-	The ```MessageHelper``` class contains a method named ```SendMessageToDeviceAsync``` that transmits an ASCII message to the device connected to the IoT hub. The message is transmitted by calling ```SendAsync``` on an instance of the ```Microsoft.Azure.Devices.ServiceClient``` class, which is included in the NuGet package named Microsoft.Azure.Devices. A listener in the embedded code you uploaded to the device in Lab 1 handles the message and executes the appropriate commands to display the text contained in the message on the screen of the device for 5 seconds before reverting back to the normal "IN FLIGHT" display.
+	The ```MessageHelper``` class contains a method named ```SendMessageToDeviceAsync``` that transmits an ASCII message to the device connected to the IoT hub. The message is transmitted by calling ```SendAsync``` on an instance of the ```Microsoft.Azure.Devices.ServiceClient``` class, which is included in the NuGet package named Microsoft.Azure.Devices. A listener in the embedded code you uploaded to the device in Lab 1 handles the message and executes the appropriate commands to display the text contained in the message on the screen of the device for 5 seconds before reverting back to the normal "IN FLIGHT" display. It also lights the red LED on the board.
 
 1. In the lower-right corner of the FlySim app, there is a ComboBox control containing a list of languages. (The default is English.) The purpose of the ComboBox is to allow you to select the language used for warning messages displayed on the screen of the MXChip.
 
@@ -362,55 +364,74 @@ One of the benefits of using Azure IoT Hubs is that they support bidirectional c
     }
 	```
 
-	This method calls ```TranslationHelper.GetTextTranslationAsync``` to convert the warning message to the language selected in the ComboBox (unless English is selected, in which case no translation is necessary), and then calls ```MessageHelper.SendMessageToDeviceAsync``` to send the message to the device.
+	This method calls ```TranslationHelper.GetTextTranslationAsync``` to convert the warning message to the language selected in the ComboBox (unless English is selected, in which case no translation is necessary). Then it calls ```MessageHelper.SendMessageToDeviceAsync``` to send the message to the device.
 
 1. Finish up by building the solution and verifying that it builds without errors.
 
 The stage is set. The FlySim app is connected to the output from Stream Analytics so it can warn you when your airplane is too close to another. All that remains is to test it out. It's time to get back into the air. And this time, you won't be alone. 
 
-<a name="Exercise3"></a>
+<a name="Exercise4"></a>
 ## Exercise 4: Test the finished solution ##
-	
-Now comes all the fun, and this will be a great introduction into this exercise.
 
-In this exercise, you will continue to navigation and practice flying. This is what you've been waiting for—flying around the Nevada Desert where a large number of pilots will be competing for air space. I know Jeff will update this so I won't go into much more detail.
+In this exercise, you will join other pilots in the room to fly your airplane through a crowded air-traffic control sector. And each time you come within two miles of another airplane, you will confirm that your airplane turns red in the ATC app and in the client app, and that the MXChip itself alerts you to the danger.
 
-1. Unplug the **Micro USB cable** from your IoT device and then plug it back in again to ensure fresh data is being sent from your device to the IoT Hub.
+1. Reset your aircraft to its default starting position over the Nevada desert by going to the Function App in the Azure Portal and clicking the **Restart** button.
 
-1. Start FlySim in debugging mode by clicking the run on **Local Machine** in the Visual Studio IDE or pressing **F5** on your keyboard. 
+	![Restarting the Function App](Images/restart-function-app.png)
 
-1. Just as in Lab #2, FlySim will load and display your plane in an "uninitialized" state somewhere in the Nevada desert.
+    _Restarting the Function App_
 
-1. Continue navigating your plane by tilting the MXChip IoT DevKit device left and right to "turn" and observe the changes to the **artificial horizon control**, as well as changes to your **heading** in the **active flight information panel**, as well as ascend and descend by tilting the device forward or backward and observe the changes to the **artificial horizon control**, as well as changes to your **altitude** in the **active flight information panel**.
+1. Make sure your MXChip is plugged into your laptop. Then return to Visual Studio and press **Ctrl+F5** to launch the FlySim app. Confirm that the app starts and that after a few seconds, an aircraft labeled with the display name you entered in Lab 1 appears on the screen. Maximize the window so you can see all the readouts and controls.
 
-	![Navigating around the Nevada Desert in FlySim](Images/app-in-flight.png)
-    _Navigating around the Nevada Desert in FlySim_ 
+	> Tip: If your plane flies off the screen and is no longer visible on the map, click the airplane in the artificial horizon to pan to your airplane.
 
-	Continue navigating around the map until you gain more confidence if your ability to control your plane, paying close attention to your altitude. If your plane leaves the map area you can simply tap the plane visual in the "artificial horizon control" to locate your plane on the map.
+	![FlySim showing Amelia Earhart over the Nevada desert](Images/app-in-flight.png)
 
-1. Ensure your device can receive messages from the IoT Hub, by selecting a different language from the language drop-down in the lower-right panel, then observe the change in display on your device to reflect a flight warning that your messaging language has changed, for example from "English" to "Deutsch" (German). 	
+    _FlySim showing Amelia Earhart over the Nevada desert_
 
-	![The MXChip IoT DevKit device reflecting a language change](Images/chip-language-change.png)
-    _The MXChip IoT DevKit device reflecting a language change_
+1. Use the ComboBox in the lower-right corner the of the client app to select the language in which you want proximity warnings to appear.
 
-	As more participants complete this exercise, you may notice the status of your plane change from green to red, indicating communication has been received from air traffic control indicating you are flying too close to another plane, and need to make an immediate adjustment, as. For example descending or turning the left or right. 
-	
-	![FlySim indicating your plane is current "at risk"](Images/app-at-risk.png)
-    _FlySim indicating your plane is current "at risk"_ 
+	![Specifying a language preference](Images/select-language.png)
 
-	When your plane status initially changes to "at risk" status, a message will also be sent your device indicating a flight warning, at which time the device LED will turn red, alerting you to the need to make an immediate adjustment to your flight pattern.
-	
-	![The MXChip IoT DevKit device reflecting a flight warning](Images/chip-warning.png)
-    _The MXChip IoT DevKit device reflecting a flight warning_
+	_Specifying a language preference_
 
-At this point in the lab, the instructor should have the air traffic control system (AirTrafficSim) running in the front of the room for all participants to view. It may help you navigate by referencing your location, in relation to other planes, based on activity on the screen.	
+1. Turn to the ATC app running on the big screen in the front of the room and find your airplane. Navigate toward an airplane near you and try to get within two miles of it. Pay attention to the altitude of the two aircraft, because if one is at 10,000 feet and the other is at 30,000, they won't turn red even if their flight paths cross. Remember that you can control your altitude by tilting your MXChip forward (down) and backward (up).
 
-![Active flights in the air traffic control app](Images/atc-planes-in-flight.png)
-_Active flights in the air traffic control app_
+	![Two airplanes approaching each other](Images/tk.png)
 
-Good luck and happy trails! Jeff, it's all yours!
+	_TODO: Add image_
+
+1. When you get within two miles of another aircraft, confirm that your airplane turns red in the client app AND in the ATC app.
+
+	![Two airplanes within two miles of each other](Images/tk.png)
+
+	_TODO: Add image_
+
+1. At the same time, check your MXChip. Confirm that the red LED lights up, and that the screen displays a warning message in the language selected in Step 3. The message disappears after 5 seconds, so if you miss it, circle around and aim for another close encounter.
+
+	![Warning message displayed by the MXChip](Images/tk.png)
+
+	_TODO: Add image_
+
+1. Continue flying until you're comfortable that your app — and your device — are working as expected.
+
+When you're finished, unplug your MXChip from your laptop to stop the flow of messages to the IoT Hub. Also go into the Azure Portal and stop the Function App since your subscription incurs charges while it's running, even if it isn't processing messages — that is, even when the VM that hosts the Function App is idle. It is possible to configure a Function App so that you are only charged when an Azure Function inside it executes, but Function Apps configured that way are not guaranteed to execute immediately. For more information, refer to https://docs.microsoft.com/en-us/azure/azure-functions/functions-scale.
 
 <a name="Summary"></a>
 ## Summary ##
 
-That's it for Part 4 of Cloud City. As usual, Jeff will add what he thinks sounds best here! Thanks, Jeff, you rock!
+At this point, it's helpful to review what you built today. Here is the big picture again:
+
+![Solution architecture](Images/architecture.png)
+
+_Solution architecture_
+
+Your MXChip transmits messages containing accelerometer data to an Azure IoT Hub. An Azure Function receives those messages and transforms the accelerometer data into flight data. Flight data flows to a private event hub connected to the client app, and to a shared event hub that provides input to Azure Stream Analytics. The Stream Analytics job analyzes the data for aircraft that are in close proximity and provides that information to the client app and the ATC app. When your aircraft comes too close to another, it turns red on the screen, and a warning appears on the screen of your MXChip. Microsoft Cognitive Services translates the warning into the language selected in the client app.
+
+This a great example of how enterprise developers build end-to-end solutions by connecting Azure services and utilizing those services from their code. And the fact that you could assemble it all in one day, from scratch, is indicative of the richness of the Azure ecosystem and of the tools that support it.
+
+Cloud City — over and out!
+
+---
+
+Copyright 2017 Microsoft Corporation. All rights reserved. Except where otherwise noted, these materials are licensed under the terms of the MIT License. You may use them according to the license as is most appropriate for your project. The terms of this license can be found at https://opensource.org/licenses/MIT.

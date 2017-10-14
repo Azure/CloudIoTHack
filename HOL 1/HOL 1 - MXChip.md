@@ -329,3 +329,7 @@ The MXChip is now running embedded code that sends accelerometer data to the IoT
 In this lab, you created an Azure IoT Hub and configured your MXChip to send data to it.
 
 In Lab 2, you will build the infrastructure necessary to fly a simulated aircraft using the MXChip. That infrastructure will consist of an Azure function that transforms accelerometer readings passing through the IoT Hub into flight data denoting the position (altitude, latitude, and longitude) and attitude (pitch and roll) of an aircraft, as well as an Azure Event Hub that receives data from the function. Once the function and Event Hub are in place, you will connect a client app to the Event Hub and practice flying an aircraft by tilting your MXChip backward and forward to go up and down and rotating it right and left to bank and turn. In other words, the fun is just beginning!
+
+---
+
+Copyright 2017 Microsoft Corporation. All rights reserved. Except where otherwise noted, these materials are licensed under the terms of the MIT License. You may use them according to the license as is most appropriate for your project. The terms of this license can be found at https://opensource.org/licenses/MIT.
