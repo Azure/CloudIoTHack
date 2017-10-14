@@ -407,7 +407,7 @@ In this exercise, you will join other pilots in the room to fly your airplane th
 
 	_Two airplanes within two miles of each other_
 
-1. At the same time, check your MXChip. Confirm that the red LED lights up, and that the screen displays a warning message in the language selected in Step 3. The message disappears after 5 seconds, so if you miss it, circle around and aim for another close encounter.
+1. At the same time, check your MXChip. Confirm that the red LED in the lower-left corner lights up, and that the screen displays a warning message in the language selected in Step 3. The message disappears after 5 seconds, so if you miss it, circle around and aim for another close encounter.
 
 	![Warning messages displayed in English, French, and Polish](Images/warning-messages.png)
 
