@@ -459,7 +459,7 @@ When you're finished, unplug your MXChip from your laptop to stop the flow of me
 <a name="Summary"></a>
 ## Summary ##
 
-At this point, it's helpful to review what you built today. Here is the big picture again:
+Let's take a moment to review what you built today. Here is the architecture diagram presented at the start of Lab 1:
 
 ![Solution architecture](Images/architecture.png)
 
