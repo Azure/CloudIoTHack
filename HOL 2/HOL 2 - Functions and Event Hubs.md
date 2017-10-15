@@ -455,6 +455,8 @@ The "FlySim" folder in the lab download contains a Universal Windows Platform (U
 
 1. Practice flying around until you feel confident in your ability to control the plane. Try flying a straight heading while maintaining a constant altitude. Also pick landmarks on the ground and practice flying around them at different altitudes. These skills will come in handy in Lab 4.
 
+	> Tip: If your plane flies off the screen and is no longer visible on the map, click the airplane in the artificial horizon to pan to your airplane.
+
 If you are curious to know how FlySim subscribes to events from the Event Hub, check out the source-code file named **FlightActivityListener.cs** in the project's "Listeners" folder. ```EventHubClient```, ```EventHubReceiver```, and other classes used there come from a popular NuGet package named [AzureSBLite](https://github.com/ppatierno/azuresblite). These classes make it extremely easy to connect to Azure Event Hubs and receive events from them asynchronously and in near real-time.
 
 <a name="Summary"></a>
