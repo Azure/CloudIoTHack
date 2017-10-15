@@ -8,9 +8,9 @@ namespace FlySim
 {
     public class PlaneStatusInfo
     {
-        public string deviceId { get; set; }
+        public string plane1 { get; set; }
+        public string plane2 { get; set; }
         public string distance { get; set; }
-        public string eventtime { get; set; }
-        public string endtime { get; set; }
+
     }
 }

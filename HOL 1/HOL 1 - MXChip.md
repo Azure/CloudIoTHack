@@ -12,7 +12,7 @@ Welcome to Cloud City! In this hands-on lab and the ones that follow, you will b
 
 _The air-traffic control application_
 
-You will be the pilot of one of these aircraft. And to do the flying, you will use hardware provided to you for this event. The [MXChip](https://microsoft.github.io/azure-iot-developer-kit/) is an Arduino-based device that is ideal for prototyping IoT solutions. It features an array of sensors, including an accelerometer, a gyrometer, temperature and humidity sensors, and it includes built-in WiFi so it can transmit data to Azure IoT Hub wirelessly. It also features a micro-USB port by which you can connect it to your laptop, upload software, and power the hardware. You will control your aircraft by tilting the MXChip backward and forward to go up and down, and rotating it left and right to turn.
+You will be the pilot of one of these aircraft. And to do the flying, you will use hardware provided to you for this event. The [MXChip](https://microsoft.github.io/azure-iot-developer-kit/) is an Arduino-based device that is ideal for prototyping IoT solutions. It features an array of sensors, including an accelerometer, a gyrometer, and temperature and humidity sensors, and it includes built-in WiFi so it can transmit data to Azure IoT Hubs wirelessly. It also features a micro-USB port by which you can connect it to your laptop, upload software, and power the hardware. You will control your aircraft by tilting the MXChip backward and forward to go up and down, and rotating it left and right to turn.
 
 ![A Micro USB cable placed next to an Azure MXChip IoT Development Board](Images/cable-and-chip.png )
 
@@ -24,7 +24,7 @@ Here is how the solution is architected, with elements that you will build or de
 
 _Solution architecture_
 
-Accelerometer data from the device is transmitted to an Azure IoT Hub. An Azure Function receives those messages and transforms the raw accelerometer data into flight data denoting altitude, latitude, longitude, heading, and other parameters. The destination for that data is a pair of Event Hubs — one that you set up, and one that is shared by every pilot in the room. Events from the "private" Event Hub are consumed by a client app running on your laptop that shows the position and attitude of your aircraft. The events sent to the shared Event Hub go to a Stream Analytics job that analyzes fast-moving data for aircraft that are in danger of colliding and provides that data to the client app and the ATC app. When your aircraft comes too close to another, it turns red on the screen, and a warning appears on the screen of your MXChip. To top it off, Microsoft Cognitive Services translates the warning into the language of your choice.
+Accelerometer data from the device is transmitted to an Azure IoT Hub. An Azure Function transforms the raw accelerometer data into flight data denoting altitude, latitude, longitude, heading, and other parameters. The destination for that data is a pair of Event Hubs — one that you set up, and one that is shared by every pilot in the room. Events from the "private" Event Hub are consumed by a client app running on your laptop that shows the position and attitude (pitch and roll) of your aircraft. The events sent to the shared Event Hub go to a Stream Analytics job that analyzes fast-moving data for aircraft that are in danger of colliding and provides that data to the client app and the ATC app. When your aircraft comes too close to another, it turns red on the screen, and a warning appears on the screen of your MXChip. To top it off, Microsoft Cognitive Services translates the warning into the language of your choice.
 
 The goal of this lab is to get the device up and running and sending events to an Azure IoT Hub. Let's get started!
 
@@ -62,13 +62,7 @@ You should have already received a package containing an MXChip IoT DevKit and a
 
     _Connecting the device to your laptop_
 
-1. Confirm that Windows begins installing the necessary drivers on your laptop, and then wait until installation is complete.
-
-	![A Windows 10 notification indicating that the STM32 STLink is set up and ready to go.](Images/device-ready.png)
-
-    _Installing drivers_
-
-1. Open a File Explorer window and confirm that it shows a new drive named "AZ3166." The drive letter that it is assigned to it may be different on your computer.
+1. Wait for Windows to install the necessary drivers on your laptop. Then open a File Explorer window and confirm that it shows a new drive named "AZ3166." The drive letter that it is assigned to it may be different on your computer.
 
 	![A file explorer window show the MXChip as a drive mounted on the computer.](Images/new-device-my-computer.png)
 
@@ -92,7 +86,7 @@ You should have already received a package containing an MXChip IoT DevKit and a
 
     _Using the device as an access point_
 
-1. Open a browser window and type the IP address shown on the device in Step 4 into the address bar.
+1. Open a browser window and type the IP address shown on the device in Step 3 into the address bar.
 
 1. Select the WiFi network set up for the event and enter the password provided by the event facilitator. Then click **Connect**.
 
@@ -115,7 +109,7 @@ You should have already received a package containing an MXChip IoT DevKit and a
 
 1. Go to https://microsoft.github.io/azure-iot-developer-kit/docs/upgrading/ and follow the instructions there to make sure you are running the latest version of the firmware. The firmware is constantly being improved, and the boards don't always come with the latest version of the firmware installed.
 
-Now that the device is connected to WiFi, it will automatically connect again if it is powered off and back on. If you later decide to connect it to another network, simply repeat Steps 4 through 9 of this exercise.
+Now that the device is connected to WiFi, it will automatically connect again if it is powered off and back on. If you later decide to connect it to another network, simply repeat Steps 3 through 8 of this exercise.
 
 <a name="Exercise2"></a>
 ## Exercise 2: Prepare a development environment ##
@@ -204,7 +198,7 @@ The next step is to get the MXChip transmitting events to the IoT Hub. Remember 
 <a name="Exercise4"></a>
 ## Exercise 4: Deploy an app to the device ##
 
-In this exercise, you will compile an embedded C++ app that transmits events to your Azure IoT Hub and use Visual Studio Code to upload it to the MXChip. Once the app is uploaded, it will begin executing on the device, and it will send a JSON payload containing three accelerometer values (X, Y, and Z) approximately every two seconds. The app is persisted in the firmware and automatically resumes execution if the device is powered off and back on.
+In this exercise, you will compile an embedded C++ app that transmits events to your Azure IoT Hub and use Visual Studio Code to upload it to the MXChip. Once the app is uploaded, it will begin executing on the device, and it will send a JSON payload containing three accelerometer values (X, Y, and Z) as well as temperature and humidity readings approximately every two seconds. The app is persisted in the firmware and automatically resumes execution if the device is powered off and back on.
 
 1. Start Visual Studio Code and select **Open Folder...** from the **File** menu. Browse to the "FlySimEmbedded" folder included in the lab download. 
 
@@ -232,19 +226,19 @@ In this exercise, you will compile an embedded C++ app that transmits events to 
 
     _Starting the cloud-provisioning process_
 
-1. In short order, a "Device Login" screen will appear in your browser. Go to the Terminal window in Visual Studio Code and copy the login code displayed there to the clipboard.
+1. When a "Device Login" screen appears in your browser, copy the login code displayed in Visual Studio Code's Terminal window to the clipboard.
 
 	![A VSCode terminakl is displaying a device login code as the result of running the 'cloud-provision' task.](Images/vs-code-prompt.png)
 
     _Getting the device-login code_
 
-1. Return to the "Device Login" screen in the browser, paste the device-login code into the input field, and click **Continue**.
+1. Return to the "Device Login" screen in the browser, paste the login code into the input field, and click **Continue**.
 
 	![An Azure CLI device login screen with an indication of where to enter a device authorization code.](Images/portal-enter-device-login.png)
 
     _Logging in to the device_
 	 
-1. Return to the Terminal window in Visual Studio Code, where a list of Azure subscriptions you're associated with is displayed. Use the up- and down-arrow keys to select the Azure subscription that you used when you provisioned the Azure IoT Hub in Exercise 3. Then press **Enter** to select that subscription.
+1. Return to the Terminal window in Visual Studio Code and wait for a list of Azure subscriptions to appear. Use the up- and down-arrow keys to select the Azure subscription that you used when you provisioned the Azure IoT Hub in Exercise 3. Then press **Enter** to select that subscription.
 
 1. When a list of IoT Hubs associated with the subscription appears in the Terminal window, select the IoT Hub that you provisioned in [Exercise 3](#Exercise3).
 
@@ -315,20 +309,20 @@ In this exercise, you will use the Azure portal to confirm that the MXCHip is re
 
     _Increasing the Baud rate_
 
-1. Look in Visual Studio Code's Output window and confirm that events are being transmitted. You can also see the JSON format in which they're transmitted. This is the raw data streaming to the IoT Hub. Note that the device is also transmitting temperature and humidity data, and that the display name you entered in the previous exercise is transmitted in a field named "deviceId."
+1. Look in Visual Studio Code's Output window and confirm that events are being transmitted. You can also see the JSON format in which they're transmitted. This is the raw data streaming to the IoT Hub. Note that the display name you entered in the previous exercise is transmitted in a field named "deviceId," and that each message includes a timestamp in the "timestamp" field.
 
 	![A VSCode terminal window displays the telemetry data generated by the MXChip.](Images/vs-viewing-com-data.png)
 
     _Events transmitted from the device to the IoT Hub_
 
-The MXChip is now running embedded code that sends accelerometer data to the IoT Hub. Consumers of that data can examine the X, Y, and Z values and determine the device's physical orientation in space. This sets the stage for the next lab, which will make use of that data.
+The MXChip is now running embedded code that sends accelerometer data to the IoT Hub. Consumers of that data can examine the X, Y, and Z values and determine the device's physical orientation in space. This sets the stage for the next lab, in which you will make use of that data.
 
 <a name="Summary"></a>
 ## Summary ##
 
 In this lab, you created an Azure IoT Hub and configured your MXChip to send data to it.
 
-In Lab 2, you will build the infrastructure necessary to fly a simulated aircraft using the MXChip. That infrastructure will consist of an Azure function that transforms accelerometer readings passing through the IoT Hub into flight data denoting the position (altitude, latitude, and longitude) and attitude (pitch and roll) of an aircraft, as well as an Azure Event Hub that receives data from the function. Once the function and Event Hub are in place, you will connect a client app to the Event Hub and practice flying an aircraft by tilting your MXChip backward and forward to go up and down and rotating it right and left to bank and turn. In other words, the fun is just beginning!
+In Lab 2, you will build the infrastructure necessary to fly a simulated aircraft using the MXChip. That infrastructure will consist of an Azure Function that transforms accelerometer readings passing through the IoT Hub into flight data denoting the position and attitude of an aircraft, as well as an Azure Event Hub that receives data from the Azure Function. Once the Function and Event Hub are in place, you will connect a client app to the Event Hub and practice flying an aircraft by tilting your MXChip backward and forward to go up and down and rotating it right and left to bank and turn. In other words, the fun is just beginning!
 
 ---
 

@@ -158,20 +158,18 @@ In Lab 3, the instructor created an Event Hub and configured Stream Analytics to
 	    {
 	        private EventHubClient client { get; set; }
 	        private EventHubConsumerGroup consumerGroup { get; set; }
-	        private EventHubReceiver receiver { get; set; }
-	        private FlightInformation flightInformation { get; set; }
-	        private ObservableCollection<ActivePlaneInformation> activePlanes { get; set; }
-	
-	        public async void StartListeningAsync(FlightInformation flightInformation, ObservableCollection<ActivePlaneInformation> activePlanes)
+	        private EventHubReceiver primaryReceiver { get; set; }
+	        private EventHubReceiver secondaryReceiver { get; set; }
+	        
+	        public async void StartListeningAsync()
 	        {
-	            this.activePlanes = activePlanes;
-	            this.flightInformation = flightInformation;
 	            this.client = EventHubClient.CreateFromConnectionString(Common.CoreConstants.SharedAirTrafficEventHubEndpoint, Common.CoreConstants.SharedAirTrafficHubName);
 	
 	            this.consumerGroup = this.client.GetDefaultConsumerGroup();
-	            this.receiver = this.consumerGroup.CreateReceiver("0", DateTime.Now.ToUniversalTime());
+	            this.primaryReceiver = this.consumerGroup.CreateReceiver("0", DateTime.Now.ToUniversalTime());
+	            this.secondaryReceiver = this.consumerGroup.CreateReceiver("1", DateTime.Now.ToUniversalTime());
 	
-	            await System.Threading.Tasks.Task.Run(() => StartListeningForTrafficCommands());
+	            await Task.Run(() => StartListeningForTrafficCommands());
 	        }
 	
 	        private async void StartListeningForTrafficCommands()
@@ -184,40 +182,81 @@ In Lab 3, the instructor created an Event Hub and configured Stream Analytics to
 	
 	                try
 	                {
-	                    var eventData = this.receiver.Receive();
+	                    var primaryEventData = this.primaryReceiver.Receive();
 	
-	                    if (eventData != null)
+	                    if (primaryEventData != null)
 	                    {
-	                        byte[] bytes = eventData.GetBytes();
+	                        byte[] bytes = primaryEventData.GetBytes();
 	                        var payload = Encoding.UTF8.GetString(bytes);
 	                        statusInfo.Clear();
 	
 	                        try
 	                        {
-	                            foreach (var info in payload.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+	                            foreach (var info in payload.Split("\r\n".ToCharArray(),
+	                                StringSplitOptions.RemoveEmptyEntries))
 	                            {
 	                                var status = JsonConvert.DeserializeObject<PlaneStatusInfo>(info);
 	
 	                                statusInfo.Add(new PlaneStatusInformation()
 	                                {
-	                                    DisplayName = status.deviceId,
+	                                    Plane1 = status.plane1,
+	                                    Plane2 = status.plane2,
 	                                    Distance = Convert.ToDouble(status.distance),
-	                                    Timestamp = DateTime.ParseExact(status.endtime, @"yyyy-MM-dd\THH:mm:ss.fffffff\Z", System.Globalization.CultureInfo.InvariantCulture),
-	                                    EventTime = DateTime.ParseExact(status.eventtime, @"yyyy-MM-dd\THH:mm:ss.fffffff\Z", System.Globalization.CultureInfo.InvariantCulture),
 	
 	                                });
 	                            }
 	                        }
-	                        catch(Exception)  {}
+	                        catch { }
 	                    }
 	
-	                    var atRiskPlanes = (from info in statusInfo
-	                                        where info.Distance < Common.CoreConstants.AtRiskThreshold
-	                                        select info.DisplayName);
+	                    var secondaryEventData = this.primaryReceiver.Receive();
 	
-	                    App.ViewModel.AtRiskPlanes = atRiskPlanes.Distinct().ToList();
+	                    if (secondaryEventData != null)
+	                    {
+	                        byte[] bytes = secondaryEventData.GetBytes();
+	                        var payload = Encoding.UTF8.GetString(bytes);
+	                        statusInfo.Clear();
+	
+	                        try
+	                        {
+	                            foreach (var info in payload.Split("\r\n".ToCharArray(),
+	                                StringSplitOptions.RemoveEmptyEntries))
+	                            {
+	                                var status = JsonConvert.DeserializeObject<PlaneStatusInfo>(info);
+	
+	                                statusInfo.Add(new PlaneStatusInformation()
+	                                {
+	                                    Plane1 = status.plane1,
+	                                    Plane2 = status.plane2,
+	                                    Distance = Convert.ToDouble(status.distance),
+	
+	                                });
+	                            }
+	                        }
+	                        catch { }
+	                    }
+	
+	                    List<FilteredPlaneStatusInfo> filteredStatus = new List<FilteredPlaneStatusInfo>();
+	
+	                    filteredStatus.AddRange(from op in statusInfo select new FilteredPlaneStatusInfo() { DisplayName = op.Plane1, Distance = op.Distance, });
+	                    filteredStatus.AddRange(from op in statusInfo select new FilteredPlaneStatusInfo() { DisplayName = op.Plane2, Distance = op.Distance, });
+	
+	                    var orderedPlanes = filteredStatus.OrderBy(o => o.Distance).GroupBy(g => g.DisplayName);
+	
+	                    var finalPlaneStatus = from plane in orderedPlanes
+	                                           select new
+	                                           {
+	                                               displayName = plane.Key,
+	                                               minimumDistance = plane.First().Distance,
+	                                           };
+	
+	                    var atRiskPlanes = (from item in finalPlaneStatus
+	                                        where item.minimumDistance < Common.CoreConstants.AtRiskThreshold
+	                                        select item.displayName).Distinct().ToList();
+	
+	                    App.ViewModel.AtRiskPlanes = atRiskPlanes;
 	                }
-	                catch(Exception) { }
+	                catch { }
 	            }
 	        }
 	    }
