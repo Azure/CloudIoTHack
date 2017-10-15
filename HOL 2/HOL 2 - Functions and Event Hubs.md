@@ -415,7 +415,7 @@ The Azure Function that you wrote is now running in cloud, transforming accelero
 <a name="Exercise5"></a>
 ## Exercise 5: Connect the client app to the Event Hub ##
 
-The "FlySim" folder in the lab download contains a Universal Windows Platform (UWP) app that you can run to fly a simulated aircraft on your laptop using your MXChip. Before you run it, you need to make some minor modifications to connect it to the Event Hub that receives data from the Azure Function.
+The "FlySim" folder in the Cloud City download contains a Universal Windows Platform (UWP) app that you can run to fly a simulated aircraft on your laptop using your MXChip. Before you run it, you need to make some minor modifications to connect it to the Event Hub that receives data from the Azure Function.
 
 1. Go to the "FlySim" folder included in the lab download and open **FlySim.sln** in Visual Studio.
 

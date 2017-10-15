@@ -6,13 +6,13 @@
 <a name="Overview"></a>
 ## Overview ##
 
-[Azure Stream Analytics](https://azure.microsoft.com/services/stream-analytics/) is a cloud-based service for ingesting high-velocity data streaming from devices, sensors, applications, Web sites, and other data sources and analyzing that data in real time. It supports a SQL-like query language that works over dynamic data streams and makes analyzing constantly changing data no more difficult than performing queries on static data stored in traditional databases. With Azure Stream Analytics, you can set up jobs that analyze incoming data for anomalies or information of interest and record the results, present notifications on dashboards, or even fire off alerts to mobile devices. And all of it can be done at low cost and with a minimum of effort.
+[Azure Stream Analytics](https://azure.microsoft.com/services/stream-analytics/) is a cloud-based service for ingesting high-velocity data streaming from devices, sensors, applications, Web sites, and other data sources and analyzing that data in real time. It supports a [SQL-like query language](https://msdn.microsoft.com/library/azure/dn834998.aspx) that works over dynamic data streams and makes analyzing constantly changing data no more difficult than performing queries on static data stored in traditional databases. With Azure Stream Analytics, you can set up jobs that analyze incoming data for anomalies or information of interest and record the results, present notifications on dashboards, or even fire off alerts to mobile devices. And all of it can be done at low cost and with a minimum of effort.
 
 Scenarios for the application of real-time data analytics are legion and include fraud detection, identity-theft protection, optimizing the allocation of resources (think of an Uber-like transportation service that sends drivers to areas of increasing demand *before* that demand peaks), click-stream analysis on Web sites, shopping suggestions on retail-sales sites, and countless others. Having the ability to process data *as it comes in* rather than waiting until after it has been aggregated offers a competitive advantage to businesses that are agile enough to make adjustments on the fly.
 
 In this lab, you will create an Azure Stream Analytics job and use it to analyze data streaming in from simulated aircraft driven the IoT devices provided to attendees at the event. Specifically, you will perform a query that identifies aircraft that are within a specified distance of each other in order to alert the pilots of those aircraft that evasive maneuvers might be required. Then you will connect the ATC app that runs on the "big screen" at the front of the room to the Stream Analytics inputs and outputs so that in Lab 4, the ATC app can show all air traffic and color-code aircraft that are too close together.
 
-> ### The instructions in this lab must be performed by an instructor, not by the attendees, because the Azure resources created in this lab are shared resources that will ultimately serve all participants. ###
+> ### The instructions in this lab must be performed by the instructor leading the event because the Azure resources created herein are shared resources that will be used by all participants. ###
 
 ---
 
@@ -23,7 +23,7 @@ This instructor-led lab includes the following exercises:
 
 - [Exercise 1: Create Event Hubs for input and output](#Exercise1)
 - [Exercise 2: Create a Stream Analytics job](#Exercise2)
-- [Exercise 3: Prepare query and test with sample data](#Exercise3)
+- [Exercise 3: Prepare a query and test with sample data](#Exercise3)
 - [Exercise 4: Connect the ATC app to the Event Hubs](#Exercise4)
 
 Estimated time to complete this lab: **45** minutes.
@@ -43,7 +43,7 @@ In this exercise, you will create two Azure Event Hubs. One will provide input t
 
     _Adding a new Event Hub_
 
-1. Type a namespace name into the **Name** box. The name must be unique within Azure, so you will probably have to use something other than the name in the screen shot below. (A green check mark will appear in the box when the name you've entered is one that Azure will accept.) Select **Create new** under **Resource group** and enter the resource-group name "cloud-city-rg" (without quotation marks). Choose the **East US** region in the **Location** drop-down, and then click the **Create** button.
+1. Type a namespace name into the **Name** box. The name must be unique within Azure, so make sure a green check mark appears next to it. Select **Create new** under **Resource group** and enter the resource-group name "cloud-city-rg" (without quotation marks). Choose the **East US** region in the **Location** drop-down, and then click the **Create** button.
 
 	> It is important to select the East US region to locate the Event Hub in the same region as the resources that attendees create. Keeping everything in one data center reduces cost and minimizes latency.
 
@@ -87,7 +87,7 @@ In this exercise, you will create two Azure Event Hubs. One will provide input t
 
     _Creating an Event Hub_
 
-1. Wait a moment for the Event Hub to be created. Then scroll to the bottom of the blade and confirm that both Event Hubs appear in the list of Event Hubs.
+1. Wait a moment for the Event Hub to be created. Then scroll to the bottom of the blade and confirm that both Event Hubs appear in the list.
 
     ![Event Hubs created for input and output](Images/event-hubs.png)
 
@@ -150,7 +150,7 @@ In this exercise, you will use the Azure Portal to create a Stream Analytics job
 
     _Adding an input_
 
-1. Type "FlightDataInput" (without quotation marks) into the **Input alias** box. Select the namespace that you created in Exercise 1, Step 3 in the **Service bus namespace** drop-down, and select **flysim-shared-input-hub** as the **Event Hub name**. Fill out the remainder of the form exactly as shown, and then click the **Create** button at the bottom of the blade.
+1. Type "FlightDataInput" (without quotation marks) into the **Input alias** box. Select the namespace that you created in Exercise 1 in the **Service bus namespace** drop-down, and select **flysim-shared-input-hub** as the **Event Hub name**. Fill out the remainder of the form exactly as shown, and then click the **Create** button at the bottom of the blade.
 
     ![Creating an input](Images/create-input.png)
 
@@ -174,7 +174,7 @@ In this exercise, you will use the Azure Portal to create a Stream Analytics job
 
     _Adding an output_
 
-1. Type "FlightDataOutput" (without quotation marks) into the **Output alias** box. Select the namespace that you created in Exercise 1, Step 3 in the **Service bus namespace** drop-down, and select **flysim-shared-output-hub** as the **Event Hub name**. Fill out the remainder of the form exactly as shown, and then click the **Create** button at the bottom of the blade.
+1. Type "FlightDataOutput" (without quotation marks) into the **Output alias** box. Select the namespace that you created in Exercise 1 in the **Service bus namespace** drop-down, and select **flysim-shared-output-hub** as the **Event Hub name**. Fill out the remainder of the form exactly as shown, and then click the **Create** button at the bottom of the blade.
 
     ![Creating an input](Images/create-output.png)
 
@@ -189,7 +189,7 @@ In this exercise, you will use the Azure Portal to create a Stream Analytics job
 You have connected a Stream Analytics job to an input Event Hub and an output Event Hub. The next step is to do something with it — specifically, to bring the power of Azure Stream Analytics to bear on the data flowing into the input hub.  
 
 <a name="Exercise3"></a>
-## Exercise 3: Prepare query and test with sample data ##
+## Exercise 3: Prepare a query and test with sample data ##
 
 In this exercise, you will use the [Stream Analytics Query Language](https://msdn.microsoft.com/en-us/library/azure/Dn834998.aspx) to query a sample data set for aircraft that are too close together. It is always a good idea to test your queries against sample data before deploying them against live data streams, because with sample data, you can verify that a known set of inputs produces the expected outputs.
 
@@ -207,16 +207,13 @@ To identify aircraft that are too close together, the query will ask for all air
 
     _Uploading sample data for testing queries_
 
-1. Click the **folder** icon on the right and select the file named **flysim-2-in-proximity.json** from the resources provided with this lab. Then click **OK** to upload the file.
+1. Click the **folder** icon on the right and select the file named **flysim-2-in-proximity.json** from the "resources" subdirectory of this lab. Then click **OK** to upload the file.
 
     ![Uploading flysim-2-in-proximity.json](Images/upload-test-data-2.png)
 
     _Uploading flysim-2-in-proximity.json_
 
-1. When the upload is complete, enter the following query, and then click the **Test** button to execute it against the sample data you uploaded:
-
-
-	> The query uses a [tumbling window](https://msdn.microsoft.com/library/azure/dn835055.aspx) to detect aircraft that are within four miles of each other and produce a list every two seconds. Aircraft that are within two miles of each are considered "at risk." TIMESTAMP BY is an important element of the Stream Analytics Query Language. If it was omitted from the query, distance calculations would be performed based on the times that the events arrived *at the Event Hub* rather than the times specified in the data stream. TIMESTAMP BY allows you to specify a field in the input stream — in this case, the "timestamp" field — as the event time.
+1. When the upload is complete, enter the following query:
 
 	```sql
 	WITH Results AS
@@ -236,6 +233,12 @@ To identify aircraft that are too close together, the query will ask for all air
 	)
 	SELECT plane1, plane2, distance INTO FlightDataOutput FROM Results
 	```
+
+	The query uses a [tumbling window](https://msdn.microsoft.com/library/azure/dn835055.aspx) to detect aircraft that are within four miles of each other and produce a list every two seconds. Aircraft that are within two miles of each are considered "at risk."
+
+	TIMESTAMP BY is an important element of the [Stream Analytics Query Language](https://msdn.microsoft.com/library/azure/dn834998.aspx). If it was omitted from the query, distance calculations would be performed based on the times that the events arrived *at the Event Hub* rather than the times specified in the data stream. TIMESTAMP BY allows you to specify a field in the input stream — in this case, the "timestamp" field — as the event time.
+
+1. Click the **Save** button at the top of the blade to save the query. Then click the **Test** button to execute it against the sample data you uploaded.
 
     ![Testing a query](Images/test-query.png)
 
@@ -259,7 +262,7 @@ To identify aircraft that are too close together, the query will ask for all air
 
     _Specifying the job start time_
 
-It will probably take the Stream Analytics job a minute or two to start, but that's OK because it's not receiving data at the moment anyway. The live data stream will start in Lab 4 when attendees modify their Azure function to send output to the shared input hub that provides input to Stream Analytics.
+It will probably take the Stream Analytics job a minute or two to start, but that's OK because it's not receiving data at the moment anyway. The live data stream will start in Lab 4 when attendees modify their Azure Function to send output to the shared input hub that provides input to Stream Analytics.
 
 <a name="Exercise4"></a>
 ## Exercise 4: Connect the ATC app to the Event Hubs ##
@@ -272,7 +275,7 @@ Now it's time to connect the ATC app, which is located in the "AirTrafficSim" fo
 
 1. Open **CoreConstants.cs** in the project's "Common" folder. Replace "SHARED_EVENT_HUB_ENDPOINT" on line 11 with the connection string you saved in Exercise 1, Step 13. Then save the file.
 
-1. Press **Ctrl+F5** to launch the app. After a short delay, AirTrafficSim will load and display an empty air traffic control map somewhere over the Nevada desert. The flight-information panel (A) shows the number of aircraft that are flying and indicates how many are "safe" and how many are "at risk" (within two miles of each other). The Altitudes panel (B) shows the altitudes of the aircrafts. The traffic map (C) shows where the aircraft are, and the status bar (D) shows the current time and provides controls for zooming out to show all active flights and zooming back to the original grid coordinates. You may also zoom in and out by placing the cursor over the map and rolling the mouse wheel, or pan by dragging the map.
+1. Press **Ctrl+F5** to launch the app. After a short delay, AirTrafficSim will load and display an empty air traffic control map somewhere over the Nevada desert. The flight-information panel (A) shows the number of aircraft that are flying and indicates how many are "safe" and how many are "at risk" (within two miles of each other). The Altitudes panel (B) shows the altitudes of the aircraft. The traffic map (C) shows where the aircraft are, and the status bar (D) shows the current time and provides controls for zooming out to show all active flights and zooming back to the original grid coordinates. You may also zoom in and out by placing the cursor over the map and rolling the mouse wheel, or pan by dragging the map.
 
 	![The AirTrafficSim app](Images/app-environment-labels.png)
 
