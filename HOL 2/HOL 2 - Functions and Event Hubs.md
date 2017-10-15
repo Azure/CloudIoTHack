@@ -8,7 +8,7 @@
 
 In Lab 1, you configured an [MXChip](https://microsoft.github.io/azure-iot-developer-kit/) to transmit accelerometer data to an Azure IoT Hub. That IoT Hub receives a stream of data revealing the device's 3D orientation in space. It knows, for example, whether the device is tilted forward or backward (and by how much), and it knows when the device is rotated left and right. The app that you uploaded to the device transmits an event containing X, Y, and Z accelerometer readings every two seconds.
 
-In Lab 2, you will build the infrastructure necessary to fly a simulated aircraft using your MXChip. That infrastructure will consist of an Azure Function that transforms accelerometer readings passing through the IoT Hub into flight data denoting the position and attitude of an aircraft, as well as an Azure Event Hub that receives data from the Azure Function. Once the Function and Event Hub are in place, you will connect a client app named **FlySim** to the Event Hub and practice flying an aircraft using your MXChip. The client app, pictured below, subscribes to events from the Event Hub and shows the disposition of your aircraft in real time.
+In Lab 2, you will build the infrastructure necessary to fly a simulated aircraft using your MXChip. That infrastructure will consist of an Azure Function that transforms accelerometer readings passing through the IoT Hub into flight data denoting the position and attitude of an aircraft, as well as an Azure Event Hub that receives data from the Azure Function. Once the Function and Event Hub are in place, you will connect a client app named **FlySim** to the Event Hub and practice flying an aircraft using your MXChip. The client app, pictured below, subscribes to events from the Event Hub and shows the disposition of your aircraft in near real time.
 
 ![The FlySim app](Images/app-in-flight.png)
 
@@ -117,9 +117,9 @@ Now that the storage account has been created, it's time to create an Azure Func
 <a name="Exercise3"></a>
 ## Exercise 3: Write an Azure Function to transform data ##
 
-[Azure Functions](https://azure.microsoft.com/services/functions/) enable you to deploy code to the cloud and execute it there without separately spinning up virtual machines (VMs) or other infrastructure to host them. They can be written in a number of languages, including C#, F#, JavaScript, Python, Bash, and PowerShell, and they are easily connected to IoT Hubs and Event Hubs.
+[Azure Functions](https://azure.microsoft.com/services/functions/) enable you to deploy code to the cloud and execute it there without separately spinning up virtual machines (VMs) or other infrastructure to host them. They can be written in a number of languages, including C#, F#, JavaScript, Python, Bash, and PowerShell, and they are easily connected to Azure IoT Hubs and Event Hubs.
 
-You can write Azure Functions in the Azure Portal, or you can write them in Visual Studio 2017. In this exercise, you will use Visual Studio 2017 to write an Azure Function that transforms raw accelerometer data arriving at the IoT Hub you created in Lab 1 into flight data denoting the disposition of an aircraft, and that transmits the transformed data to the Event Hub you created in [Exercise 1](#Exercise1). 
+You can write Azure Functions in the Azure Portal, or you can write them in Visual Studio 2017. The latter provides a more robust environment for testing and debugging your code. In this exercise, you will use Visual Studio 2017 to write an Azure Function that transforms raw accelerometer data arriving at the IoT Hub you created in Lab 1 into flight data denoting the disposition of an aircraft, and that transmits the transformed data to the Event Hub you created in [Exercise 1](#Exercise1). 
 
 1. Start Visual Studio 2017 and use the **Help** > **About Microsoft Visual Studio** command to verify that you are running Visual Studio 15.3 or higher. If not, update Visual Studio now.
 
@@ -135,7 +135,7 @@ You can write Azure Functions in the Azure Portal, or you can write them in Visu
 
     _Creating a new Azure Functions project_
 
-1. Right-click the FlySimFunctions project in Solution Explorer and use the **Add** > **New Item...** command to create an Azure Function file named **FlySimIoTFlightData.cs**.
+1. Right-click the FlySimFunctions project in Solution Explorer and use the **Add** > **New Item...** command to add an Azure Function file named **FlySimIoTFlightData.cs**.
 
 	![Adding an Azure Function to the project](Images/vs-add-new-function.png)
 
@@ -268,7 +268,7 @@ You can write Azure Functions in the Azure Portal, or you can write them in Visu
 	}
 	```
 
-	Take a moment to examine the code you just pasted in, beginning with the parameters in the method's parameter list. ```inputMessage``` holds the JSON-formatted message that arrived at the IoT Hub, while ```outputMessage``` represents the message (or messages) to be transmitted to the Event Hub. After deserializing the input message, this Azure Function computes new flight data — airspeed, heading, altitude, and so on — from the accelerometer values passed by the device. Then it serializes the flight data into JSON and outputs it to the Event Hub by calling ```AddAsync``` on the ```outputMessage``` parameter.
+	Take a moment to examine the code you pasted in, beginning with the method's parameter list. ```inputMessage``` holds the JSON-formatted message that arrived at the IoT Hub, while ```outputMessage``` represents the message (or messages) to be transmitted to the Event Hub. After deserializing the input message, this Azure Function computes new flight data — airspeed, heading, altitude, and so on — from the accelerometer values passed by the device. Then it serializes the flight data into JSON and outputs it to the Event Hub by calling ```AddAsync``` on the ```outputMessage``` parameter.
 
 
 1. Open **local.settings.json** and replace the contents of the file with the following JSON:
@@ -417,7 +417,7 @@ The Azure Function that you wrote is now running in cloud, transforming accelero
 
 The "FlySim" folder in the lab download contains a Universal Windows Platform (UWP) app that you can run to fly a simulated aircraft on your laptop using your MXChip. Before you run it, you need to make some minor modifications to connect it to the Event Hub that receives data from the Azure Function.
 
-1. Open **FlySim.sln** in Visual Studio.
+1. Go to the "FlySim" folder included in the lab download and open **FlySim.sln** in Visual Studio.
 
 1. Right-click the FlySim solution in Solution Explorer and select **Restore NuGet Packages** to load all the dependencies.
 
@@ -425,13 +425,13 @@ The "FlySim" folder in the lab download contains a Universal Windows Platform (U
 
 1. Return to Visual Studio and open **CoreConstants.cs** in the project's "Common" folder. Replace EVENT_HUB_ENDPOINT on line 11 with the connection string that's on the clipboard. Then save the file.
 
-1. Reset your aircraft to its default starting position over the Nevada desert by going to the Function App in the Azure Portal and clicking the **Restart** button.
+1. Reset your aircraft to its default starting position over the Nevada desert by going to the Function App in the Azure Portal and clicking **Restart**.
 
 	![Restarting the Function App](Images/restart-function-app.png)
 
     _Restarting the Function App_
 
-1. Make sure your MXChip is plugged into your laptop. Then return to Visual Studio and press **Ctrl+F5** to launch the FlySim app. Confirm that the app starts and that after a few seconds, an "aircraft" labeled with the display name you entered in Lab 1 appears on the screen. Maximize the window so you can see all the readouts and controls.
+1. Make sure your MXChip is plugged into your laptop. Then return to Visual Studio and press **Ctrl+F5** to launch FlySim. Confirm that the app starts and that after a few seconds, an "aircraft" labeled with the display name you entered in Lab 1 appears on the screen. Maximize the window so you can see all the readouts and controls.
 
 	![FlySim showing Amelia Earhart over the Nevada desert](Images/app-in-flight.png)
 
@@ -455,7 +455,7 @@ The "FlySim" folder in the lab download contains a Universal Windows Platform (U
 
 1. Practice flying around until you feel confident in your ability to control the plane. Try flying a straight heading while maintaining a constant altitude. Also pick landmarks on the ground and practice flying around them at different altitudes. These skills will come in handy in Lab 4.
 
-	> Tip: If your plane flies off the screen and is no longer visible on the map, click the airplane in the artificial horizon to pan to your airplane.
+	> Tip: If your plane flies off the screen and is no longer visible on the map, click the airplane in the artificial horizon to bring it back into view.
 
 If you are curious to know how FlySim subscribes to events from the Event Hub, check out the source-code file named **FlightActivityListener.cs** in the project's "Listeners" folder. ```EventHubClient```, ```EventHubReceiver```, and other classes used there come from a popular NuGet package named [AzureSBLite](https://github.com/ppatierno/azuresblite). These classes make it extremely easy to connect to Azure Event Hubs and receive events from them asynchronously and in near real-time.
 

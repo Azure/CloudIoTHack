@@ -411,7 +411,7 @@ In this exercise, you will join other pilots in the room to fly your airplane th
 
 1. Make sure your MXChip is plugged into your laptop. Then return to Visual Studio and press **Ctrl+F5** to launch the FlySim app. Confirm that the app starts and that after a few seconds, an aircraft labeled with the display name you entered in Lab 1 appears on the screen. Maximize the window so you can see all the readouts and controls.
 
-	> Remember: If your plane flies off the screen and is no longer visible on the map, click the airplane in the artificial horizon to pan to your airplane.
+	> Remember that if your plane flies off the screen and is no longer visible on the map, you can click the airplane in the artificial horizon to bring it back into view.
 
 	![FlySim showing Amelia Earhart over the Nevada desert](Images/app-in-flight.png)
 
