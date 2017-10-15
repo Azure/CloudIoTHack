@@ -263,7 +263,7 @@ In Lab 3, the instructor created an Event Hub and configured Stream Analytics to
 1. Still in **MainViewModel.cs**, locate the ```InitializeSystem``` method and add the following line of code to it: 
 
 	```C#
-	this.AirTrafficListener.StartListeningAsync(this.CurrentFlightInformation, this.ActivePlanes);
+	AirTrafficListener.StartListeningAsync();
 	```
 
 1. Rebuild the solution and confirm that your changes compile successfully.
