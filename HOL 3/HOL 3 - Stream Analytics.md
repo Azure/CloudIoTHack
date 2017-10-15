@@ -14,6 +14,17 @@ In this lab, you will create an Azure Stream Analytics job and use it to analyze
 
 > ### The instructions in this lab must be performed by the instructor leading the event because the Azure resources created herein are shared resources that will be used by all participants. ###
 
+<a name="Prerequisites"></a>
+### Prerequisites ###
+
+The following are required to complete this lab:
+
+- An [MXChip IoT DevKit](https://microsoft.github.io/azure-iot-developer-kit/)
+- A computer running [Windows 10 Anniversary Edition](https://www.microsoft.com/en-us/software-download/windows10) or higher
+- [Visual Studio 2017](https://www.visualstudio.com/downloads/) Community edition version 15.3 or higher with the UWP and Azure workloads installed
+- An active Microsoft Azure subscription. If you don't have one, [sign up for a free trial](http://aka.ms/WATK-FreeTrial)
+- An available WiFi connection or mobile hotspot
+
 ---
 
 <a name="Exercises"></a>

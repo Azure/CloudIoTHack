@@ -10,9 +10,9 @@ In the previous session, your flight instructor created an [Azure Stream Analyti
 
 In this lab, you will close the loop by marrying what you built in Labs 1 and 2 with what the instructor built in Lab 3 to assemble a complete end-to-end solution. First, you will modify the Azure Function you wrote in Lab 2 to transmit flight data to the shared input hub — the one that provides input to Stream Analytics — so Stream Analytics *and* the ATC app presented at the end of the previous session can see all of the aircraft in the room.
 
-![The ATC app showing several planes in flight](Images/atc-app.png)
+![The ATC app with many planes in flight](Images/atc-app.png)
 
-_The ATC app showing several planes in flight_
+_The ATC app with many planes in flight_
 
 Second, you will connect the client app that you built in Lab 2 to the shared output hub — the one that receives output from Stream Analytics — so that when your aircraft comes too close to another and turns red in the ATC app, it turns red in the client app, too.
 
@@ -48,7 +48,7 @@ Estimated time to complete this lab: **60** minutes.
 <a name="Exercise1"></a>
 ## Exercise 1: Connect the Azure Function to the shared input hub ##
 
-In Lab 2, you deployed an Azure Function that reads input from an IoT hub, transforms accelerometer data coming from your MXChip into flight data, and transmits the output to an Azure Event Hub that provides input to the FlySim app. In this exercise, you will add an output to the Azure Function so that it transmits the same flight data to the shared input hub created by the instructor in Lab 3. Because everyone else in the room is making the same modification, and because the shared input hub provides data to the ATC app and to Stream Analytics, the ATC app will be able to show all the aircraft that are in the air, and the Stream Analytics job will be able to detect when aircraft come too close together.   
+In Lab 2, you deployed an Azure Function that reads input from an Azure IoT Hub, transforms accelerometer data coming from your MXChip into flight data, and transmits the output to an Azure Event Hub that provides input to the FlySim app. In this exercise, you will add an output to the Azure Function so that it transmits the same flight data to the shared input hub created by the instructor in Lab 3. Because everyone else in the room is making the same modification, and because the shared input hub provides data to the ATC app and to Stream Analytics, the ATC app will be able to show all the aircraft that are in the air, and the Stream Analytics job will be able to detect when aircraft come too close together.   
 
 1. Start Visual Studio and open the FlySimFunctions solution that you created in Lab 2.
 
@@ -219,7 +219,6 @@ In Lab 3, the instructor created an Event Hub and configured Stream Analytics to
 	                    
 	                }
 	                catch { }
-	
 	            }
 	        }
 	
@@ -252,7 +251,7 @@ In Lab 3, the instructor created an Event Hub and configured Stream Analytics to
 	}
 	```
 
-	The purpose of this code is to listen for events coming from the shared output hub and to update the view-model if your plane is among those "at risk." If it is, it turns red in the view. The heavy lifting is performed by the ```EventHubClient``` and ```EventHubReciver``` classes, which are part of the NuGet package [AzureSBLite](https://github.com/ppatierno/azuresblite). 
+	The purpose of this code is to listen for events coming from the shared output hub and to update the view-model so that if your plane is among those "at risk," it can turn red in the view. The heavy lifting is performed by the ```EventHubClient``` and ```EventHubReciver``` classes, which are part of the NuGet package [AzureSBLite](https://github.com/ppatierno/azuresblite). 
 
 1. Open **MainViewModel.cs** in the project's "ViewModels" folder and insert the following line of code below the ```FlightActivityListener``` property on line 40 to create an instance of ```AirTrafficListener```:
 
@@ -273,7 +272,7 @@ FlySim now has the smarts to turn your airplane red if it receives information f
 <a name="Exercise3"></a>
 ## Exercise 3: Update the client app to talk back to the device ##
 
-One of the benefits of using Azure IoT Hubs is that they support bidirectional communication. Devices can send messages to IoT Hubs, and IoT Hubs can send messages back to the devices connected to them. In this exercise, you will modify the FlySim client app to send a message to your MXChip through the IoT Hub it's connected to when your airplane is too close to another airplane. That message will command the MXChip to display a warning message on its screen. For an added touch, you will use Microsoft Cognitive Services to translate the warning message into the language of the user's choice before displaying it on the device. 
+One of the benefits of using Azure IoT Hubs is that they support bidirectional communication. Devices can send messages to IoT Hubs, and IoT Hubs can send messages back to the devices connected to them. In this exercise, you will modify the FlySim client app to send a message to your MXChip through the IoT Hub it's connected to when your airplane is too close to another airplane. That message will command the MXChip to display a warning message on its screen. For an added touch, you will use Microsoft Cognitive Services to translate the warning message into the language of the user's choice. 
 
 1. In Visual Studio, open **CoreConstants.cs** in the project's "Common" folder and insert the following statement after the statement declaring ```SharedAirTrafficHubName``` that you added in the previous exercise:
 
@@ -401,7 +400,7 @@ The stage is set. The FlySim app is connected to the output from Stream Analytic
 <a name="Exercise4"></a>
 ## Exercise 4: Test the finished solution ##
 
-In this exercise, you will join other pilots in the room to fly your airplane through a crowded air-traffic control sector. And each time you come within two miles of another airplane, you will confirm that your airplane turns red in the ATC app and in the client app, and that the MXChip itself alerts you to the danger.
+In this exercise, you will join other pilots in the room to fly your airplane through a crowded air-traffic control sector. And each time you come within two miles of another airplane, you will confirm that your airplane turns red in the ATC app and in the client app, and that the MXChip alerts you to the danger.
 
 1. Reset your aircraft to its default starting position over the Nevada desert by going to the Function App in the Azure Portal and clicking the **Restart** button.
 
@@ -454,7 +453,7 @@ Let's take a moment to review what you built today. Here is the architecture dia
 
 _Solution architecture_
 
-Your MXChip transmits messages containing accelerometer data to an Azure IoT Hub. An Azure Function receives those messages and transforms the accelerometer data into flight data. Flight data flows to a private event hub connected to the client app, and to a shared event hub that provides input to Azure Stream Analytics. The Stream Analytics job analyzes the data for aircraft that are in close proximity and provides that information to the client app and the ATC app. When your aircraft comes too close to another, it turns red on the screen, and a warning appears on the screen of your MXChip. Microsoft Cognitive Services translates the warning into the language selected in the client app.
+Your MXChip transmits messages containing accelerometer data to an Azure IoT Hub. An Azure Function receives those messages and transforms the accelerometer data into flight data. Flight data flows to a private event hub connected to the client app, and to a shared event hub that provides input to Azure Stream Analytics and to the ATC app. The Stream Analytics job analyzes the data for aircraft that are in close proximity and provides that information to the client app and the ATC app. When your aircraft comes too close to another, it turns red on the screen, and a warning appears on the screen of your MXChip. Microsoft Cognitive Services translates the warning into the language selected in the client app.
 
 This a great example of how enterprise developers build end-to-end solutions by connecting Azure services and utilizing those services from their code. And the fact that you could assemble it all in one day, from scratch, is indicative of the richness of the Azure ecosystem and of the tools that support it.
 

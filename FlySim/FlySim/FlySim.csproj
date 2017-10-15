@@ -95,6 +95,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Classes\FilteredPlaneStatusInfo.cs" />
     <Compile Include="Classes\FlightInfo.cs" />
     <Compile Include="Classes\NewFlightInfo.cs" />
     <Compile Include="Classes\PlaneStatusInfo.cs" />
