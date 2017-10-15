@@ -1,5 +1,5 @@
 <a name="HOLTitle"></a>
-# Using Azure Functions and Event Hubs to Process IoT Data #
+# Using Azure Functions and Azure Event Hubs to Process IoT Data #
 
 ---
 
@@ -8,7 +8,7 @@
 
 In Lab 1, you configured an [MXChip](https://microsoft.github.io/azure-iot-developer-kit/) to transmit accelerometer data to an Azure IoT Hub. That IoT Hub receives a stream of data revealing the device's 3D orientation in space. It knows, for example, whether the device is tilted forward or backward (and by how much), and it knows when the device is rotated left and right. The app that you uploaded to the device transmits an event containing X, Y, and Z accelerometer readings every two seconds.
 
-In Lab 2, you will build the infrastructure necessary to fly a simulated aircraft using your MXChip. That infrastructure will consist of an Azure Function that transforms accelerometer readings passing through the IoT Hub into flight data denoting the position and attitude of an aircraft, as well as an Azure Event Hub that receives data from the Azure Function. Once the Function and Event Hub are in place, you will connect a client app named **FlySim** to the Event Hub and practice flying an aircraft using your MXChip. The client app, pictured below, subscribes to events from the Event Hub and shows the position and attitude of your aircraft in real time.
+In Lab 2, you will build the infrastructure necessary to fly a simulated aircraft using your MXChip. That infrastructure will consist of an Azure Function that transforms accelerometer readings passing through the IoT Hub into flight data denoting the position and attitude of an aircraft, as well as an Azure Event Hub that receives data from the Azure Function. Once the Function and Event Hub are in place, you will connect a client app named **FlySim** to the Event Hub and practice flying an aircraft using your MXChip. The client app, pictured below, subscribes to events from the Event Hub and shows the disposition of your aircraft in real time.
 
 ![The FlySim app](Images/app-in-flight.png)
 

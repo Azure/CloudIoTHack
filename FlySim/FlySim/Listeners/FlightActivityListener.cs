@@ -26,10 +26,11 @@ namespace FlySim.Listeners
         {
             this.activePlanes = activePlanes;
             this.flightInformation = flightInformation;
-
+             
             var connectionString = $"{CoreConstants.FlightActivityEventHubEndpoint};EntityPath={CoreConstants.FlightActivityEventHubName}";
-            client = EventHubClient.CreateFromConnectionString(connectionString);
 
+            client = EventHubClient.CreateFromConnectionString(connectionString);
+            
             consumerGroup = client.GetDefaultConsumerGroup();
             receiver = consumerGroup.CreateReceiver("0", DateTime.Now.ToUniversalTime());
 

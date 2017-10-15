@@ -18,13 +18,9 @@ namespace AirTrafficSim.Listeners
         private EventHubReceiver primaryReceiver { get; set; }
         private EventHubReceiver secondaryReceiver { get; set; }
 
-        public bool IsConfigured
-        {
-            get
-            {
-                return Common.CoreConstants.SharedEventHubEndpoint.ToLower().Contains("endpoint=sb://");
-            }
-        }
+        private List<PlaneStatusInformation> statusInfo = new List<PlaneStatusInformation>();
+
+        public bool IsConfigured => Common.CoreConstants.SharedEventHubEndpoint.ToLower().Contains("endpoint=sb://");
 
         public async void StartListeningAsync()
         {
@@ -39,7 +35,7 @@ namespace AirTrafficSim.Listeners
 
         private async void StartListeningForTrafficCommands()
         {
-            List<PlaneStatusInformation> statusInfo = new List<PlaneStatusInformation>();
+            
 
             while (true)
             {
@@ -51,64 +47,14 @@ namespace AirTrafficSim.Listeners
 
                     if (primaryEventData != null)
                     {
-                        byte[] bytes = primaryEventData.GetBytes();
-
-                        var payload = Encoding.UTF8.GetString(bytes);
-
-                        statusInfo.Clear();
-
-                        try
-                        {
-                            foreach (var info in payload.Split("\r\n".ToCharArray(),
-                                StringSplitOptions.RemoveEmptyEntries))
-                            {
-                                var status = JsonConvert.DeserializeObject<PlaneStatusInfo>(info);
-
-                                statusInfo.Add(new PlaneStatusInformation()
-                                {
-                                    Plane1 = status.plane1,
-                                    Plane2 = status.plane2,
-                                    Distance = Convert.ToDouble(status.distance),
-
-                                });
-                            }
-                        }
-                        catch
-                        {
-                            
-                        }
+                        GeneratePlaneStatus(primaryEventData.GetBytes());
                     }
 
                     var secondaryEventData = this.primaryReceiver.Receive();
 
                     if (secondaryEventData != null)
                     {
-                        byte[] bytes = secondaryEventData.GetBytes();
-
-                        var payload = Encoding.UTF8.GetString(bytes);
-
-                        statusInfo.Clear();
-
-                        try
-                        {
-                            foreach (var info in payload.Split("\r\n".ToCharArray(),
-                                StringSplitOptions.RemoveEmptyEntries))
-                            {
-                                var status = JsonConvert.DeserializeObject<PlaneStatusInfo>(info);
-
-                                statusInfo.Add(new PlaneStatusInformation()
-                                {
-                                    Plane1 = status.plane1,
-                                    Plane2 = status.plane2,
-                                    Distance = Convert.ToDouble(status.distance),
-
-                                });
-                            }
-                        }
-                        catch
-                        {
-
-                        }
+                        GeneratePlaneStatus(secondaryEventData.GetBytes());
                     }
 
                     List<FilteredPlaneStatusInfo> filteredStatus = new List<FilteredPlaneStatusInfo>();
@@ -134,6 +80,32 @@ namespace AirTrafficSim.Listeners
                 catch { }
 
             }
+        }
+
+        private void GeneratePlaneStatus(byte[] bytes)
+        {
+            if (bytes == null) return;
+
+            statusInfo.Clear();
+
+            try
+            {
+                var payload = Encoding.UTF8.GetString(bytes);
+
+                foreach (var info in payload.Split("\r\n".ToCharArray(),
+                    StringSplitOptions.RemoveEmptyEntries))
+                {
+                    var status = JsonConvert.DeserializeObject<PlaneStatusInfo>(info);
+
+                    statusInfo.Add(new PlaneStatusInformation()
+                    {
+                        Plane1 = status.plane1,
+                        Plane2 = status.plane2,
+                        Distance = Convert.ToDouble(status.distance),
+                    });
+                }
+            }
+            catch { }
         }
     }
 }

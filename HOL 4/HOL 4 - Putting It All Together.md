@@ -160,7 +160,10 @@ In Lab 3, the instructor created an Event Hub and configured Stream Analytics to
 	        private EventHubConsumerGroup consumerGroup { get; set; }
 	        private EventHubReceiver primaryReceiver { get; set; }
 	        private EventHubReceiver secondaryReceiver { get; set; }
-	        
+	
+	        readonly List<PlaneStatusInformation> statusInfo = new List<PlaneStatusInformation>();
+	        private List<FilteredPlaneStatusInfo> filteredStatus = new List<FilteredPlaneStatusInfo>();
+	
 	        public async void StartListeningAsync()
 	        {
 	            this.client = EventHubClient.CreateFromConnectionString(Common.CoreConstants.SharedAirTrafficEventHubEndpoint, Common.CoreConstants.SharedAirTrafficHubName);
@@ -174,8 +177,6 @@ In Lab 3, the instructor created an Event Hub and configured Stream Analytics to
 	
 	        private async void StartListeningForTrafficCommands()
 	        {
-	            List<PlaneStatusInformation> statusInfo = new List<PlaneStatusInformation>();
-	
 	            while (true)
 	            {
 	                await Task.Delay(1);
@@ -186,60 +187,20 @@ In Lab 3, the instructor created an Event Hub and configured Stream Analytics to
 	
 	                    if (primaryEventData != null)
 	                    {
-	                        byte[] bytes = primaryEventData.GetBytes();
-	                        var payload = Encoding.UTF8.GetString(bytes);
-	                        statusInfo.Clear();
-	
-	                        try
-	                        {
-	                            foreach (var info in payload.Split("\r\n".ToCharArray(),
-	                                StringSplitOptions.RemoveEmptyEntries))
-	                            {
-	                                var status = JsonConvert.DeserializeObject<PlaneStatusInfo>(info);
-	
-	                                statusInfo.Add(new PlaneStatusInformation()
-	                                {
-	                                    Plane1 = status.plane1,
-	                                    Plane2 = status.plane2,
-	                                    Distance = Convert.ToDouble(status.distance),
-	
-	                                });
-	                            }
-	                        }
-	                        catch { }
+	                        GeneratePlaneStatus(primaryEventData.GetBytes());
 	                    }
 	
 	                    var secondaryEventData = this.primaryReceiver.Receive();
 	
 	                    if (secondaryEventData != null)
 	                    {
-	                        byte[] bytes = secondaryEventData.GetBytes();
-	                        var payload = Encoding.UTF8.GetString(bytes);
-	                        statusInfo.Clear();
-	
-	                        try
-	                        {
-	                            foreach (var info in payload.Split("\r\n".ToCharArray(),
-	                                StringSplitOptions.RemoveEmptyEntries))
-	                            {
-	                                var status = JsonConvert.DeserializeObject<PlaneStatusInfo>(info);
-	
-	                                statusInfo.Add(new PlaneStatusInformation()
-	                                {
-	                                    Plane1 = status.plane1,
-	                                    Plane2 = status.plane2,
-	                                    Distance = Convert.ToDouble(status.distance),
-	
-	                                });
-	                            }
-	                        }
-	                        catch { }
+	                        GeneratePlaneStatus(secondaryEventData.GetBytes());
 	                    }
 	
-	                    List<FilteredPlaneStatusInfo> filteredStatus = new List<FilteredPlaneStatusInfo>();
+	                    filteredStatus = new List<FilteredPlaneStatusInfo>();
 	
-	                    filteredStatus.AddRange(from op in statusInfo select new FilteredPlaneStatusInfo() { DisplayName = op.Plane1, Distance = op.Distance, });
-	                    filteredStatus.AddRange(from op in statusInfo select new FilteredPlaneStatusInfo() { DisplayName = op.Plane2, Distance = op.Distance, });
+	                    filteredStatus.AddRange(from info in statusInfo select new FilteredPlaneStatusInfo() { DisplayName = info.Plane1, Distance = info.Distance, });
+	                    filteredStatus.AddRange(from info in statusInfo select new FilteredPlaneStatusInfo() { DisplayName = info.Plane2, Distance = info.Distance, });
 	
 	                    var orderedPlanes = filteredStatus.OrderBy(o => o.Distance).GroupBy(g => g.DisplayName);
 	
@@ -250,14 +211,42 @@ In Lab 3, the instructor created an Event Hub and configured Stream Analytics to
 	                                               minimumDistance = plane.First().Distance,
 	                                           };
 	
-	                    var atRiskPlanes = (from item in finalPlaneStatus
-	                                        where item.minimumDistance < Common.CoreConstants.AtRiskThreshold
-	                                        select item.displayName).Distinct().ToList();
+	                    var atRiskPlanes = (finalPlaneStatus
+	                        .Where(item => item.minimumDistance < Common.CoreConstants.AtRiskThreshold)
+	                        .Select(item => item.displayName)).Distinct().ToList();
 	
 	                    App.ViewModel.AtRiskPlanes = atRiskPlanes;
+	                    
 	                }
 	                catch { }
+	
 	            }
+	        }
+	
+	        private void GeneratePlaneStatus(byte[] bytes)
+	        {
+	            if (bytes == null) return;
+	
+	            statusInfo.Clear();
+	
+	            try
+	            {
+	                var payload = Encoding.UTF8.GetString(bytes);
+	
+	                foreach (var info in payload.Split("\r\n".ToCharArray(),
+	                    StringSplitOptions.RemoveEmptyEntries))
+	                {
+	                    var status = JsonConvert.DeserializeObject<PlaneStatusInfo>(info);
+	
+	                    statusInfo.Add(new PlaneStatusInformation()
+	                    {
+	                        Plane1 = status.plane1,
+	                        Plane2 = status.plane2,
+	                        Distance = Convert.ToDouble(status.distance),
+	                    });
+	                }
+	            }
+	            catch { }
 	        }
 	    }
 	}

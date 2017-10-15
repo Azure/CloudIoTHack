@@ -22,13 +22,7 @@ namespace AirTrafficSim.Listeners
 
         public int CurrentDelay = 1;
 
-        internal bool IsConfigured
-        {
-            get
-            {
-                return Common.CoreConstants.SharedEventHubEndpoint.ToLower().Contains("endpoint=sb://");
-            }
-        }        
+        internal bool IsConfigured => Common.CoreConstants.SharedEventHubEndpoint.ToLower().Contains("endpoint=sb://");
 
         public async void StartListeningAsync()
         {
