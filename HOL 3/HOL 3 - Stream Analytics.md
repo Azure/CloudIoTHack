@@ -24,6 +24,7 @@ The following are required to complete this lab:
 - [Visual Studio 2017](https://www.visualstudio.com/downloads/) Community edition version 15.3 or higher with the UWP and Azure workloads installed
 - An active Microsoft Azure subscription. If you don't have one, [sign up for a free trial](http://aka.ms/WATK-FreeTrial)
 - An available WiFi connection or mobile hotspot
+- An active GitHub account
 
 ---
 
@@ -116,7 +117,15 @@ In this exercise, you will create two Azure Event Hubs. One will provide input t
 
     _Copying the connection string_
 
-1. Paste the connection string on the clipboard into a text file and **save the text file so you can easily retrieve it at the end of this lab**.
+1. Go to https://gist.github.com/ and sign in with your GitHub account if you aren't already signed in. Type "Endpoint for connecting to shared input and output hubs" into the description box, and paste the connection string on the clipboard into the content box. Then click **Create public gist** to create a public gist.
+
+	> Remember to delete this gist when the event is over since it contains a shared-access signature that allows anyone to connect to the event hubs you just created.
+
+	![Creating a gist](Images/create-gist.png)
+
+	_Creating a gist_
+
+	Leave your browser window open so you can easily retrieve the endpoint yourself in Exercise 4.
 
 You have created a pair of Event Hubs: one to provide input to Stream Analytics, and another to receive output from Stream Analytics. The next step is to create the Stream Analytics job itself.
 
@@ -284,7 +293,7 @@ Now it's time to connect the ATC app, which is located in the "AirTrafficSim" fo
 
 1. Right-click the AirTrafficSim solution in Solution Explorer and select **Restore NuGet Packages** to load all the dependencies.
 
-1. Open **CoreConstants.cs** in the project's "Common" folder. Replace "SHARED_EVENT_HUB_ENDPOINT" on line 11 with the connection string you saved in Exercise 1, Step 13. Then save the file.
+1. Open **CoreConstants.cs** in the project's "Common" folder. Replace "SHARED_EVENT_HUB_ENDPOINT" on line 11 with the connection string you saved as a gist in Exercise 1, Step 13. Then save the file.
 
 1. Press **Ctrl+F5** to launch the app. After a short delay, AirTrafficSim will load and display an empty air traffic control map somewhere over the Nevada desert. The flight-information panel (A) shows the number of aircraft that are flying and indicates how many are "safe" and how many are "at risk" (within two miles of each other). The Altitudes panel (B) shows the altitudes of the aircraft. The traffic map (C) shows where the aircraft are, and the status bar (D) shows the current time and provides controls for zooming out to show all active flights and zooming back to the original grid coordinates. You may also zoom in and out by placing the cursor over the map and rolling the mouse wheel, or pan by dragging the map.
 
