@@ -135,7 +135,7 @@ In Lab 3, the instructor created an Event Hub and configured Stream Analytics to
 
 1. Return to Visual Studio and replace "SHARED_EVENT_HUB_ENDPOINT" in **CoreConstants.cs** with the value on the clipboard. 
 
-1. Right-click the "Listeners" folder in Solution Explorer and use the **Add** > **New Item...** command to add a class file named **AirTrafficListener.cs**. Then replace the contents of the file with the following code:
+1. Right-click the "Listeners" folder in Solution Explorer and use the **Add** > **Class...** command to add a class file named **AirTrafficListener.cs**. Then replace the contents of the file with the following code:
 
 	```C#
 	using Newtonsoft.Json;
@@ -291,7 +291,7 @@ One of the benefits of using Azure IoT Hubs is that they support bidirectional c
 
 1. Return to Visual Studio and replace "IOT_DEVICE_ENDPOINT" in **CoreConstants.cs** with the connection string on the clipboard.
 
-1. Right-click the "Helpers" folder in Solution Explorer and use the **Add** > **New Item...** command to add a class file named **MessageHelper.cs**. Then replace the contents of the file with the following code:
+1. Right-click the "Helpers" folder in Solution Explorer and use the **Add** > **Class...** command to add a class file named **MessageHelper.cs**. Then replace the contents of the file with the following code:
 
 	```C#
 	using Microsoft.Azure.Devices;

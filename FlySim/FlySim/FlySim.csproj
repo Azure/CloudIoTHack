@@ -111,7 +111,6 @@
     <Compile Include="Extensions\CompassExtensions.cs" />
     <Compile Include="Extensions\ControlExtensions.cs" />
     <Compile Include="Helpers\ControlHelper.cs" />
-    <Compile Include="Listeners\FlightActivityListener.cs" />
     <Compile Include="Helpers\MapHelper.cs" />
     <Compile Include="Helpers\StorageHelper.cs" />
     <Compile Include="Helpers\ThemeHelper.cs" />

@@ -8,7 +8,6 @@ using Windows.Devices.Geolocation;
 using Windows.UI.Xaml.Controls.Maps;
 using FlySim.Common;
 using FlySim.Helpers;
-using FlySim.Listeners;
 using FlySim.Translation;
 
 namespace FlySim
@@ -37,7 +36,6 @@ namespace FlySim
        
         public List<string> AtRiskPlanes = new List<string>();
 
-        public FlightActivityListener FlightActivityListener = new FlightActivityListener();
 
         public MainViewModel(MapControl map)
         {
@@ -122,7 +120,6 @@ namespace FlySim
 
         public void InitializeSystem()
         {
-            FlightActivityListener.StartListeningAsync(CurrentFlightInformation, ActivePlanes);
         }
 
         private void InitializeClocks()

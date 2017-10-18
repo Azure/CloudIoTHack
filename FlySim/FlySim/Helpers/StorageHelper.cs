@@ -23,9 +23,8 @@ namespace FlySim.Helpers
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
             }
 
             return retrievedMarkers;
@@ -49,9 +48,8 @@ namespace FlySim.Helpers
 
                 successful = true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
             }
 
             return successful;

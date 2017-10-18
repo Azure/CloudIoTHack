@@ -120,7 +120,7 @@ namespace FlySim.Helpers
 
                 App.ViewModel.CurrentGridScale = mapDistance; // / 12.0;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
 

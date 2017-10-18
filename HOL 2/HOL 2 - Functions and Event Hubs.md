@@ -415,7 +415,7 @@ The Azure Function that you wrote is now running in cloud, transforming accelero
 <a name="Exercise5"></a>
 ## Exercise 5: Connect the client app to the Event Hub ##
 
-The "FlySim" folder in the Cloud City download contains a Universal Windows Platform (UWP) app that you can run to fly a simulated aircraft on your laptop using your MXChip. Before you run it, you need to make some minor modifications to connect it to the Event Hub that receives data from the Azure Function.
+The "FlySim" folder in the Cloud City download contains a Universal Windows Platform (UWP) app that you can run to fly a simulated aircraft on your laptop using your MXChip. Before you run it, you need to make some modifications to connect it to the Event Hub that receives data from the Azure Function.
 
 1. Go to the "FlySim" folder included in the lab download and open **FlySim.sln** in Visual Studio.
 
@@ -424,6 +424,122 @@ The "FlySim" folder in the Cloud City download contains a Universal Windows Plat
 1. Repeat Steps 12 through 14 of [Exercise 3](#Exercise3) to copy the Event Hub's connection string to the clipboard.
 
 1. Return to Visual Studio and open **CoreConstants.cs** in the project's "Common" folder. Replace EVENT_HUB_ENDPOINT on line 11 with the connection string that's on the clipboard. Then save the file.
+
+1. Right-click the project in Solution Explorer and use the **Add** > **New Folder** command to add a folder named "Listeners."
+
+1. Right-click the "Listeners" folder in Solution Explorer and use the **Add** > **Class...** command to add a class file named **FlightActivityListener.cs**. Then replace the contents of the file with the following code:
+
+	```C#
+	using System;
+	using System.Collections.ObjectModel;
+	using System.Text;
+	using System.Threading.Tasks;
+	using Windows.ApplicationModel.Core;
+	using Windows.Devices.Geolocation;
+	using Windows.UI.Core;
+	using FlySim.Common;
+	using Newtonsoft.Json;
+	using ppatierno.AzureSBLite.Messaging;
+	
+	namespace FlySim.Listeners
+	{
+	    public class FlightActivityListener
+	    {
+	        private EventHubClient client { get; set; }
+	        private EventHubConsumerGroup consumerGroup { get; set; }
+	        private EventHubReceiver receiver { get; set; }
+	        private FlightInformation flightInformation { get; set; }
+	        private ObservableCollection<ActivePlaneInformation> activePlanes { get; set; }
+	
+	        private bool isInitialized { get; set; }
+	
+	        public async void StartListeningAsync(FlightInformation flightInformation,
+	            ObservableCollection<ActivePlaneInformation> activePlanes)
+	        {
+	            this.activePlanes = activePlanes;
+	            this.flightInformation = flightInformation;
+	             
+	            var connectionString = $"{CoreConstants.FlightActivityEventHubEndpoint};EntityPath={CoreConstants.FlightActivityEventHubName}";
+	
+	            client = EventHubClient.CreateFromConnectionString(connectionString);
+	            consumerGroup = client.GetDefaultConsumerGroup();
+	            receiver = consumerGroup.CreateReceiver("0", DateTime.Now.ToUniversalTime());
+	
+	            await Task.Run(() => StartListeningForFlightActivityCommands());
+	        }
+	
+	        private async void StartListeningForFlightActivityCommands()
+	        {
+	            while (true)
+	            {
+	                await Task.Delay(1);
+	                var eventData = receiver.Receive();
+	
+	                if (eventData != null)
+	                {
+	                    var bytes = eventData.GetBytes();
+	                    var payload = Encoding.UTF8.GetString(bytes);
+	                    var flightInfo = JsonConvert.DeserializeObject<NewFlightInfo>(payload);
+	                    UpdateFlightInformation(flightInfo);
+	                }
+	            }
+	        }
+	
+	        private async void UpdateFlightInformation(NewFlightInfo info)
+	        {
+	            var dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
+	
+	            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+	            {
+	                flightInformation.Hydrate(info);
+	                
+	                activePlanes.Add(new ActivePlaneInformation
+	                {
+	                    DisplayName = info.deviceId,
+	                    Location = new Geopoint(new BasicGeoposition
+	                    {
+	                        Latitude = info.latitude,
+	                        Longitude = info.longitude
+	                    })
+	                });
+	
+	                activePlanes.RemoveAt(0);
+	                App.ViewModel.SetFlightStatus(info.deviceId);
+	
+	                if (!isInitialized)
+	                {
+	                    isInitialized = true;
+	                    App.ViewModel.BringPlaneIntoView(info.latitude, info.longitude);
+	                }
+	            });
+	        }
+	    }
+	}
+	```
+
+	 ```EventHubClient```, ```EventHubReceiver```, and other classes used here come from a popular NuGet package named [AzureSBLite](https://github.com/ppatierno/azuresblite). These classes make it extremely easy to connect to Azure Event Hubs and receive events from them asynchronously. The call to ```EventHubReceiver.Receive``` is performed on a background thread, and it blocks until a message arrives at the Event Hub. After the message is retrieved and deserialized, it is passed to ```UpdateFlightinformation```, which uses ```Dispatcher.RunAsync``` to marshal back to the UI thread and update the UI.
+
+1. Open **MainViewModel.cs** in the project's "ViewModels" folder and the following ```using``` statement to those at the top of the file:
+
+	```C#
+	using FlySim.Listeners;
+	```
+
+1. Now add the following statement just before the class constructor:
+
+	```C#
+	public FlightActivityListener FlightActivityListener = new FlightActivityListener();
+	```
+
+	This statement creates an instance of the ```FlightActivityListener``` class you created in the previous step and assigns it to a public field.
+
+1. Add the following statement to the ```MainViewModel``` class's ```InitializeSystem``` method to start listening for events from the Event Hub when the app starts up:
+
+	```C#
+	FlightActivityListener.StartListeningAsync(CurrentFlightInformation, ActivePlanes);
+	```
+
+1. Save your changes and build the solution to make sure it builds successfully.
 
 1. Reset your aircraft to its default starting position over the Nevada desert by going to the Function App in the Azure Portal and clicking **Restart**.
 
@@ -449,15 +565,13 @@ The "FlySim" folder in the Cloud City download contains a Universal Windows Plat
 
 1. Now level the wings and tilt the nose of the plane up. Confirm that the background of the artificial horizon shifts down showing more blue, indicating that the plane is in a nose-up attitude. Also confirm that if you keep the nose up, the altitude readouts in the instrument panel and on the map increase over time.
 
+	> Tip: If your plane flies off the screen and is no longer visible on the map, click the airplane in the artificial horizon to bring it back into view.
+
 	![Pointing the nose up](Images/app-ascending.png)
 
     _Pointing the nose up_
 
-1. Practice flying around until you feel confident in your ability to control the plane. Try flying a straight heading while maintaining a constant altitude. Also pick landmarks on the ground and practice flying around them at different altitudes. These skills will come in handy in Lab 4.
-
-	> Tip: If your plane flies off the screen and is no longer visible on the map, click the airplane in the artificial horizon to bring it back into view.
-
-If you are curious to know how FlySim subscribes to events from the Event Hub, check out the source-code file named **FlightActivityListener.cs** in the project's "Listeners" folder. ```EventHubClient```, ```EventHubReceiver```, and other classes used there come from a popular NuGet package named [AzureSBLite](https://github.com/ppatierno/azuresblite). These classes make it extremely easy to connect to Azure Event Hubs and receive events from them asynchronously and in near real-time.
+Practice flying around until you feel confident in your ability to control the plane. Try flying a straight heading while maintaining a constant altitude. Also pick landmarks on the ground and practice flying around them at different altitudes. These skills will come in handy in Lab 4.
 
 <a name="Summary"></a>
 ## Summary ##
