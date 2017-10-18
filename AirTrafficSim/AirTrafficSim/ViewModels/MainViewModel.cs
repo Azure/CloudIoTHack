@@ -28,18 +28,6 @@ namespace AirTrafficSim
             InitializeClocks();
 
             LoadInitializer();
-
-            CheckAndSetConfigurationAsync();
-            
-        }
-
-        private async void CheckAndSetConfigurationAsync()
-        {
-            if (this.FlightActivityListener.IsConfigured)
-            {
-                await Helpers.SharedConfigurationHelper.SetSharedConfigurationAsync();
-            }
-
         }
 
         private async void LoadInitializer()

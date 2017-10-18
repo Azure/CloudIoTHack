@@ -12,7 +12,6 @@ namespace AirTrafficSim.Common
         public const string SharedFlightActivityHubName = "flysim-shared-input-hub";
         public const string SharedAirTrafficHubName = "flysim-shared-output-hub";
         
-        public const string EndpointConfigurationServiceUrl = "http://traininglabs.io/api/FlySim";
         public static string MapServiceToken = "HvD1WpB9MyrWv30BaZCP~-DZBRQGBV2rbPRfQqjBZUQ~AkD5MLW_Sj2_nCY3sesLC3Ldua1j84cVqhnL2Pl5MpY1lbLLnVrmmHoqAVjjvbhO";
         public const double AreaRadius = 80467.0;
         public const double AtRiskThreshold = 10560.0;

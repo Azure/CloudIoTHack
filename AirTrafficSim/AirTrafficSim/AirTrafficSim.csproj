@@ -100,7 +100,6 @@
     <Compile Include="Classes\FlightInfo.cs" />
     <Compile Include="Classes\NewFlightInfo.cs" />
     <Compile Include="Classes\PlaneStatusInfo.cs" />
-    <Compile Include="Classes\SharedConfigurationInformation.cs" />
     <Compile Include="Common\CoreConstants.cs" />
     <Compile Include="Common\CoreConverters.cs" />
     <Compile Include="Common\CoreEnums.cs" />
@@ -115,7 +114,6 @@
     <Compile Include="Listeners\FlightActivityListener.cs" />
     <Compile Include="Helpers\ControlHelper.cs" />
     <Compile Include="Helpers\MapHelper.cs" />
-    <Compile Include="Helpers\SharedConfigurationHelper.cs" />
     <Compile Include="Helpers\ThemeHelper.cs" />
     <Compile Include="Helpers\TimerHelper.cs" />
     <Compile Include="Listeners\AirTrafficListener.cs" />
