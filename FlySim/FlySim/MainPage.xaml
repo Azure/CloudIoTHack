@@ -16,12 +16,12 @@
         </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="540"/>
-            <ColumnDefinition MinWidth="800" Width="*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition MinHeight="350" Height="*"/>
-            <RowDefinition Height="540"/>
+            <RowDefinition x:Name="readoutRow" />
+            <RowDefinition x:Name="horizonRow" MinHeight="540" />
             <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
 
@@ -104,11 +104,11 @@
 
             <maps:MapControl ZoomLevelChanged="OnZoomChanged" Margin="16" LandmarksVisible="True" x:Name="flightMap" 
                            MapServiceToken="{x:Bind MapServiceToken}" 
-                           ZoomInteractionMode="GestureAndControl" 
-                               TiltInteractionMode="GestureAndControl"  Style="Aerial3DWithRoads"                 
+                           ZoomInteractionMode="GestureAndControl" Style="Aerial3DWithRoads"
+                               TiltInteractionMode="GestureAndControl"                  
                                ColorScheme="Dark"     
                                IsTabStop="False">
-                
+
                 <maps:MapItemsControl ItemsSource="{Binding ActivePlanes}">
                     <maps:MapItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -117,11 +117,24 @@
                     </maps:MapItemsControl.ItemTemplate>
                 </maps:MapItemsControl>
             </maps:MapControl>
-            
-            <Grid Margin="10" x:Name="mapGrid" />
 
+            <Grid Margin="10" x:Name="mapGrid" />
+            
             <Rectangle RadiusX="8" RadiusY="8" StrokeDashArray="4,4,4,4" Stroke="White" StrokeThickness="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
+            <Border x:Name="readoutPanel" BorderBrush="Gray" BorderThickness="1" Margin="25,25,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#EE000000">
+                <StackPanel Margin="20">
+                    <TextBlock>
+                        <Run Text="Airspeed:"/>
+                        <Run Text="{Binding CurrentFlightInformation.CurrentSpeed, Converter={StaticResource AirspeedLabelConverter}}"/>
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="Heading:"/>
+                        <Run Text="{Binding CurrentFlightInformation.CurrentHeading, Converter={StaticResource HeadingLabelConverter}}"/>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+            
         </Grid>
 
 
@@ -165,6 +178,36 @@
                 </ComboBox>
             </StackPanel>
         </Grid>
-
+        <!--  Adaptive triggers  -->
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="WindowStates">
+                <VisualState x:Name="TallState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowHeight="1000"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="readoutPanel.Visibility"
+                                Value="Collapsed" />
+                        <Setter Target="readoutRow.Height"
+                                Value="*" />
+                        <Setter Target="horizonRow.Height"
+                                Value="540" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ShortState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowHeight="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="readoutPanel.Visibility"
+                                Value="Visible" />
+                        <Setter Target="readoutRow.Height"
+                                Value="0" />
+                        <Setter Target="horizonRow.Height"
+                                Value="*" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

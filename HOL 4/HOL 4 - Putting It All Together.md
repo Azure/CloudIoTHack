@@ -86,13 +86,11 @@ In Lab 2, you deployed an Azure Function that reads input from an Azure IoT Hub,
 	 "SharedEventHubConnection": "SHARED_EVENT_HUB_ENDPOINT",
 	```
 
-1. Navigate to http://bit.ly/FlySimConfig in your browser and click the **Copy** button next to "SharedEventHubConnection" to copy the connection string for the shared input hub — the one that provides input to Stream Analytics — to the clipboard.
+1. Navigate to the Gist URL provided to you by the instructor (for example, https://gist.github.com/scottgu) and copy the connection string from the public gist that the instructor created in the previous lab to the clipboard. Leave the browser window open so you can easily grab this connection string again.
 
-	> Where did the connection string come from? When your instructor ran the AirTrafficSim app at the end of the previous lab, the app uploaded the connection string to the Web site.
-	
-	![Copying the connection string to the clipboard](Images/copy-connection-string-1.png)
+	![Copying the connection string to the clipboard](Images/copy-from-gist.png)
 
-    _Copying the connection string to the clipboard_
+	_Copying the connection string to the clipboard_
 
 1. Return to Visual Studio and replace "SHARED_EVENT_HUB_ENDPOINT" in **local.settings.json** with the value on the clipboard. 
 
@@ -104,7 +102,7 @@ In Lab 2, you deployed an Azure Function that reads input from an Azure IoT Hub,
 
 	_Opening application settings_
 
-1. Click **+ Add new setting** in the "Application settings" section. Add a setting named "SharedEventHubConnection" and set its value equal to the connection string that's on the clipboard. (If the connection string is no longer on the clipboard, you can return to http://bit.ly/FlySimConfig and copy it from there.) When you're finished, click **Save** at the top of the blade.
+1. Click **+ Add new setting** in the "Application settings" section. Add a setting named "SharedEventHubConnection" and set its value equal to the connection string that you copied to the clipboard in Step 5. When you're finished, click **Save** at the top of the blade.
 
 	![Adding an application setting](Images/new-application-setting.png)
 
@@ -129,12 +127,11 @@ In Lab 3, the instructor created an Event Hub and configured Stream Analytics to
 	public static string SharedAirTrafficEventHubEndpoint = "SHARED_EVENT_HUB_ENDPOINT";
     public static string SharedAirTrafficHubName = "flysim-shared-output-hub";
 	```
+1. Return to the gist that you opened in the previous exercise and copy the connection string to the clipboard again.
 
-1. Navigate to http://bit.ly/FlySimConfig in your browser and click the **Copy** button next to "SharedAirTrafficEventHubEndpoint" to copy the connection string for the shared output hub — the one that receives output from Stream Analytics — to the clipboard.
+	![Copying the connection string to the clipboard](Images/copy-from-gist.png)
 
-	![Copying the connection string to the clipboard](Images/copy-connection-string-2.png)
-
-    _Copying the connection string to the clipboard_
+	_Copying the connection string to the clipboard_
 
 1. Return to Visual Studio and replace "SHARED_EVENT_HUB_ENDPOINT" in **CoreConstants.cs** with the value on the clipboard. 
 
@@ -251,7 +248,7 @@ In Lab 3, the instructor created an Event Hub and configured Stream Analytics to
 	}
 	```
 
-	The purpose of this code is to listen for events coming from the shared output hub and to update the view-model so that if your plane is among those "at risk," it can turn red in the view. The heavy lifting is performed by the ```EventHubClient``` and ```EventHubReciver``` classes, which are part of the NuGet package [AzureSBLite](https://github.com/ppatierno/azuresblite). 
+	The purpose of this code is to listen for events coming from the shared output hub and to update the view-model so that if your plane is among those "at risk," it turns red in the view. The heavy lifting is performed by the ```EventHubClient``` and ```EventHubReciver``` classes, which are part of the NuGet package [AzureSBLite](https://github.com/ppatierno/azuresblite). 
 
 1. Open **MainViewModel.cs** in the project's "ViewModels" folder and insert the following line of code below the ```FlightActivityListener``` property on line 40 to create an instance of ```AirTrafficListener```:
 

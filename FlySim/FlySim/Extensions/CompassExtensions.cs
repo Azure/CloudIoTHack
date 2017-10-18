@@ -30,10 +30,9 @@ namespace FlySim
             return (CompassDirection)sector;
         }
 
-
         public static string GetSuffix(this CompassDirection direction)
         {
-            return mapping[direction];
+            return mapping.ContainsKey(direction) ? mapping[direction] : "N";
         }
 
         public static Boolean IsWithin(this BasicGeoposition pt, BasicGeoposition nw, BasicGeoposition se)
