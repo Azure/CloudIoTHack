@@ -6,17 +6,10 @@
 
 This repo contains content for the Cloud City IoT Hack, an event that provides developers with a hands-on introduction to some of the very best features Microsoft Azure has to offer, including [IoT Hubs](https://azure.microsoft.com/services/iot-hub/), [Event Hubs](https://azure.microsoft.com/services/event-hubs/), [Azure Functions](https://azure.microsoft.com/services/functions/), [Stream Analytics](https://azure.microsoft.com/services/stream-analytics/), and [Cognitive Services](https://azure.microsoft.com/services/cognitive-services/). Four hands-on labs are found in folders named HOL 1, HOL 2, HOL 3, and HOL 4. Here's a synopsis of those labs:
 
-<<<<<<< HEAD
-- HOL 1 - Attendees create an Azure IoT Hub and program an [MXCHIP]([MXChip](https://microsoft.github.io/azure-iot-developer-kit/)) to send accelerometer data to it.
-- HOL 2 - Attendees create an Azure Event Hub and deploy an Azure Function that transforms accelerometer data input to the IoT Hub into "flight data" denoting the disposition on an airplane and transmits it to the Event Hub. Then they connect a UWP client app to the Event Hub and use their MXChip to fly a simulated airplane.
-- HOL 3 - The instructor creates a pair of Event Hubs and deploys a Stream Analytics job that analyzes all the air traffic in the room for aircraft that are within two miles of each another. He or she also deploys a UWP app that shows all the air traffic.
-- HOL 4 - Attendees modify the Azure Function they deployed in Lab 2 to transmit flight data to the input hub used by Stream Analytics. They also connect the client app to the Stream Analytics output and modify the app to transmit warning messages back to the MXChip when their aircraft are within two miles of another.
-=======
 - [HOL 1](HOL%201/HOL%201%20-%20MXChip.md) - Attendees create an Azure IoT Hub and program an [MXCHIP]([MXChip](https://microsoft.github.io/azure-iot-developer-kit/)) to send accelerometer data to it.
 - [HOL 2](HOL%202/HOL%202%20-%20Functions%20and%20Event%20Hubs.md) - Attendees create an Azure Event Hub and deploy an Azure Function that transforms accelerometer data input to the IoT Hub into "flight data" denoting the disposition on an airplane and transmits it to the Event Hub. Then they connect a UWP client app to the Event Hub and use their MXChip to fly a simulated airplane.
-- [HOL 3](HOL%203/HOL%203%20-%20Stream%20Analytics.md) - The instructor creates a pair of Event Hubs and deploys a Stream Analytics job that analyzes all the air traffic in the room for aircraft that are within two miles of aech another. He or she also deploys a UWP app that shows all the air traffic.
+- [HOL 3](HOL%203/HOL%203%20-%20Stream%20Analytics.md) - The instructor creates a pair of Event Hubs and deploys a Stream Analytics job that analyzes all the air traffic in the room for aircraft that are within two miles of each another. He or she also deploys a UWP app that shows all the air traffic.
 - [HOL 4](HOL%204/HOL%204%20-%20Putting%20It%20All%20Together.md) - Attendees modify the Azure Function they deployed in Lab 2 to transmit flight data to the input hub used by Stream Analytics. They also connect the client app to the Stream Analytics output and modify the app to transmit warning messages back to the MXChip when their aircraft are within two miles of another.
->>>>>>> 331d788ac7cbfa895294de09a1bd1117b3b03818
 
 The repo also has three folders containing source code used in the labs:
 
