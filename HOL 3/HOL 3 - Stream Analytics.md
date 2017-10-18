@@ -117,15 +117,13 @@ In this exercise, you will create two Azure Event Hubs. One will provide input t
 
     _Copying the connection string_
 
-1. Go to https://gist.github.com/ and sign in with your GitHub account if you aren't already signed in. Type "Endpoint for connecting to shared input and output hubs" into the description box, and paste the connection string on the clipboard into the content box. Then click **Create public gist** to create a public gist.
+1. Go to https://gist.github.com/ and sign in with your GitHub account if you aren't already signed in. Type "Endpoint for connecting to shared input and output hubs" into the description box, and paste the connection string on the clipboard into the content box. Then click **Create public gist** to create a public gist. Leave your browser window open so you can easily retrieve the connection string yourself in Exercise 4.
 
 	> Remember to delete this gist when the event is over since it contains a shared-access signature that allows anyone to connect to the event hubs you just created.
 
 	![Creating a gist](Images/create-gist.png)
 
 	_Creating a gist_
-
-	Leave your browser window open so you can easily retrieve the endpoint yourself in Exercise 4.
 
 You have created a pair of Event Hubs: one to provide input to Stream Analytics, and another to receive output from Stream Analytics. The next step is to create the Stream Analytics job itself.
 
