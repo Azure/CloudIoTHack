@@ -54,7 +54,7 @@ Estimated time to complete this lab: **60** minutes.
 <a name="Exercise1"></a>
 ## Exercise 1: Power up the device and connect to WiFi ##
 
-You should have already received a package containing an MXChip IoT DevKit and a USB cable. In this exercise, you will connect the device to your laptop, allow Windows to install drivers for it, and connect the device to WiFi so it can transmit events to an Azure IoT Hub.
+You have already received a package containing an MXChip IoT DevKit and a USB cable. In this exercise, you will connect the device to your laptop, allow Windows to install drivers for it, and connect the device to WiFi so it can transmit events to an Azure IoT Hub.
 
 1. Connect the micro end of the USB cable to the micro-USB port on the device (1). Then connect the other end of the cable to a USB port on your computer (2). Confirm that the green LED next to the micro-USB port on the board lights up (3), and that "No WiFi" appears on the screen of the device.
 
@@ -173,7 +173,7 @@ In this exercise, you will provision an Azure IoT Hub for your MXChip to transmi
 
     _Provisioning a new IoT Hub_
  
-1. Enter a unique name for IoT Hub in the **Name** field. IoT Hub names must be unique across Azure, so make sure a green check mark appears next to it. Also make sure **Create new** is selected under **Resource group**, and enter the resource-group name "FlySimResources." Select **East US** as the **Location** (important!). Accept the default values everywhere else, and then click **Create**.
+1. Enter a unique name for IoT Hub in the **Name** field. IoT Hub names must be unique across Azure, so make sure a green check mark appears next to it. Also make sure **S1 - Standard** is selected as the pricing tier. Select **Create new** under **Resource group** and enter the resource-group name "FlySimResources." Select **East US** as the **Location** (important!). Accept the default values everywhere else, and then click **Create**.
 
 	> You selected East US as the location because in Lab 3, the instructor will create Azure resources in that same region for the IoT Hub to connect to. Azure resources can be connected across regions, but keeping everything within the same data center reduces cost and minimizes latency.
 
@@ -193,7 +193,7 @@ In this exercise, you will provision an Azure IoT Hub for your MXChip to transmi
 
     _Successful deployment_
 
-The next step is to get the MXChip transmitting events to the IoT Hub. Remember the name you assigned to the IoT Hub in Step 3, because you will need it in the next exercise.
+Because you selected **S1 - Standard** as the pricing tier in Step 3, you can transmit up to 400,000 messages a day to the IoT Hub for $50 per month. A **Free** tier that accepts up to 8,000 messages per day is also available, but that tier might be too limiting for today's exercise. For more information on the various pricing tiers that are available, see [IoT Hub pricing](https://azure.microsoft.com/pricing/details/iot-hub/).
 
 <a name="Exercise4"></a>
 ## Exercise 4: Deploy an app to the device ##
@@ -208,13 +208,13 @@ In this exercise, you will compile an embedded C++ app that transmits events to 
 
     _Entering a display name_
  
-1. Press **F1** and type "terminal" into the search box. Then select "Select Default Shell."
+1. Press **F1** and type "terminal" into the search box. Then select **Select Default Shell**.
 
 	![The VSCode quick start menu has the word 'terminal' entered in it's text box with the selection 'Terminal: Select Default Shell' highlighted.](Images/select-default-shell-1.png)
 
     _Selecting the default shell_
 
-1. Select PowerShell from the list of shells to make PowerShell the default shell.
+1. Select **PowerShell** from the list of shells to make PowerShell the default shell.
 
 	![The VSCode quick start menu displays the available terminals to set as default; 'PowerShell' has been highlighted.](Images/select-default-shell-2.png)
 
@@ -238,7 +238,7 @@ In this exercise, you will compile an embedded C++ app that transmits events to 
 
     _Logging in to the device_
 	 
-1. Return to the Terminal window in Visual Studio Code and wait for a list of Azure subscriptions to appear. Use the up- and down-arrow keys to select the Azure subscription that you used when you provisioned the Azure IoT Hub in Exercise 3. Then press **Enter** to select that subscription.
+1. Return to the Terminal window in Visual Studio Code and wait for a list of Azure subscriptions to appear. Use the up- and down-arrow keys to select the Azure subscription that you used to provision the Azure IoT Hub in [Exercise 3](#Exercise3). Then press **Enter** to select that subscription.
 
 1. When a list of IoT Hubs associated with the subscription appears in the Terminal window, select the IoT Hub that you provisioned in [Exercise 3](#Exercise3).
 
@@ -252,7 +252,7 @@ In this exercise, you will compile an embedded C++ app that transmits events to 
 
     _A successful cloud-provision task_
 
-1. Select **Tasks** > **Run Task** again, and then select **device-upload**. 
+1. Now it's time to upload code to the device to have it transmit events to the IoT Hub. Select **Tasks** > **Run Task** again, and then select **device-upload**. 
 
 	![The VSCode menu displays a list of executable tasks including 'cloud-provision', 'config_wifi' and 'device-upload'.  The 'device-upload' selection is highlighted.](Images/vs-select-device-upload.png)
 
@@ -285,17 +285,17 @@ In this exercise, you will use the Azure portal to confirm that the MXCHip is re
 
     _Opening a blade for the IoT Hub_
 
-1. Click **Device Explorer** to display a list of all devices that are registered to communicate with this IoT Hub. Confirm that your device ("AZ3166") appears in the list.
-
-	![The Azure Portal's IoT Hub blade is displayed with the Device Explorer tab highlighted.  The pane to the right shows that the MXChip has been registered with IoT Hub.](Images/portal-device-explorer.png)
-
-    _Devices registered with the IoT Hub_
-
 1. Click **Overview** and look at the count of messages received and the number of devices registered. Confirm that the device count is 1, and that the number of messages received is greater than zero.
 
 	![The Azure Portal's IoT Hub blade is displaying the Overview tab with a highlight over the Usage statistics panel.](Images/portal-hub-usage.png)
 
     _Stats regarding the IoT Hub_
+
+1. Click **Device Explorer** to display a list of all devices that are registered to communicate with this IoT Hub. Confirm that your device ("AZ3166") appears in the list.
+
+	![The Azure Portal's IoT Hub blade is displayed with the Device Explorer tab highlighted.  The pane to the right shows that the MXChip has been registered with IoT Hub.](Images/portal-device-explorer.png)
+
+    _Devices registered with the IoT Hub_
 
 1. Return to Visual Studio Code and click the **Connect** icon in the status bar at lower right.
 
@@ -303,7 +303,7 @@ In this exercise, you will use the Azure portal to confirm that the MXCHip is re
 
     _Connecting to the device via a COM port_
 
-1. When the icon changes to an 'X', click the Baud rate just to its left and select **115200** from the drop-down list to increase the Baud rate. 
+1. When the icon changes to an 'X', click the Baud rate on the left and select **115200** from the drop-down list to increase the Baud rate. 
 
 	![The document information display bar at the bottom of a VSCode window that shows the baud rate configuration selection menu set to 9600.](Images/vs-click-baud-rate.png)
 

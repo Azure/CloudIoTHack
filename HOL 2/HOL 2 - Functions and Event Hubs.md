@@ -55,7 +55,7 @@ In this exercise, you will use the Azure Portal to create an Event Hub that will
 
     _Adding a new event hub_
 
-1. Type a namespace name into the **Name** box. The name must be unique within Azure, so make sure a green check mark appears next to it. Select **Use existing** under **Resource group** and select the "FlySimResources" resource group that you created in Lab 1. Choose the **East US** region in the **Location** drop-down, and then click **Create**.
+1. Type a namespace name into the **Name** box. The name must be unique within Azure, so make sure a green check mark appears next to it. Also make sure **Pricing tier** is set to **Standard**. Select **Use existing** under **Resource group** and select the "FlySimResources" resource group that you created in Lab 1. Choose the **East US** region in the **Location** drop-down, and then click **Create**.
 
 	> It is important to select the East US region to locate the Event Hub in the same region as the IoT Hub you created in Lab 1. This reduces cost and minimizes latency.
 
@@ -79,21 +79,21 @@ In this exercise, you will use the Azure Portal to create an Event Hub that will
 
 	![Adding an Event Hub](Images/add-event-hub.png)
 
-    _Adding an event hub_
+    _Adding an Event Hub_
  
 1. Type "flysim" (without quotation marks) into the **Name** box. Then click the **Create** button.
  
 	![Creating an Event Hub](Images/create-event-hub.png)
 
-    _Creating an event hub_
+    _Creating an Event Hub_
 
 1. Wait a moment for the Event Hub to be created. Then confirm that "flysim" appears in the list of Event Hubs.
  
 	![The new Event Hub](Images/flysim-event-hub.png)
 
-    _The new event hub_
+    _The new Event Hub_
 
-The Event Hub is in place. But there is one more detail to take care of before writing an Azure Function to send events to it. 
+How much do Azure Event Hubs cost? The **Standard** pricing tier that you selected in Step 3 incurs a nominal charge per million events received, as well as a flat hourly charge per throughput unit. Currently, an Event Hub with one throughput unit (each throughput unit can handle 1 MB per second of data input and 2 MB per second of data output) that receives one million events per day costs less than a dollar a day. For more information and current pricing, see [Event Hubs pricing](https://azure.microsoft.com/pricing/details/event-hubs/).
 
 <a name="Exercise2"></a>
 ## Exercise 2: Provision an Azure storage account ##
@@ -121,7 +121,7 @@ Now that the storage account has been created, it's time to create an Azure Func
 
 You can write Azure Functions in the Azure Portal, or you can write them in Visual Studio 2017. The latter provides a more robust environment for testing and debugging your code. In this exercise, you will use Visual Studio 2017 to write an Azure Function that transforms raw accelerometer data arriving at the IoT Hub you created in Lab 1 into flight data denoting the disposition of an aircraft, and that transmits the transformed data to the Event Hub you created in [Exercise 1](#Exercise1). 
 
-1. Start Visual Studio 2017 and use the **Help** > **About Microsoft Visual Studio** command to verify that you are running Visual Studio 15.3 or higher. If not, update Visual Studio now.
+1. Start Visual Studio and use the **Help** > **About Microsoft Visual Studio** command to verify that you are running Visual Studio 15.3 or higher. If not, update Visual Studio now.
 
 1. Select **Extensions and Updates...** from Visual Studio's **Tools** menu, and select **Visual Studio Marketplace** under **Updates** on the left. If "Azure Functions and Web Jobs Tools" appears in the list of updates, click the **Update** button next to it.
 
@@ -311,7 +311,7 @@ You can write Azure Functions in the Azure Portal, or you can write them in Visu
 
     _Copying the endpoint to the clipboard_
 
-1. Return to Visual Studio 2017 and replace IOT_HUB_ENDPOINT in **local.settings.json** with the value on the clipboard. Then replace IOT_HUB_NAME on the same line with the name of your IoT Hub.
+1. Return to Visual Studio and replace IOT_HUB_ENDPOINT in **local.settings.json** with the value on the clipboard. Then replace IOT_HUB_NAME on the same line with the name of your IoT Hub.
 
 1. Return to the "FlySimResources" resource group in the Azure Portal and click the Event Hub that you created in [Exercise 1](#Exercise1).
 
@@ -331,7 +331,7 @@ You can write Azure Functions in the Azure Portal, or you can write them in Visu
 
     _Copying the connection string to the clipboard_
 
-1. Return to Visual Studio 2017 and replace EVENT_HUB_ENDPOINT in **local.settings.json** with the value on the clipboard.
+1. Return to Visual Studio and replace EVENT_HUB_ENDPOINT in **local.settings.json** with the value on the clipboard.
 
 1. Return to the "FlySimResources" resource group in the Azure Portal and click the storage account that you created in [Exercise 2](#Exercise2).
 
@@ -345,7 +345,7 @@ You can write Azure Functions in the Azure Portal, or you can write them in Visu
 
     _Copying the connection string to the clipboard_
 
-1. Return to Visual Studio 2017 and replace STORAGE_ACCOUNT_ENDPOINT in **local.settings.json** with the value on the clipboard.
+1. Return to Visual Studio and replace STORAGE_ACCOUNT_ENDPOINT in **local.settings.json** with the value on the clipboard.
 
 1. Now it's time to test the Function and make sure it is triggered each time an event from the MXChip reaches the IoT Hub. If your MXChip isn't plugged in, connect it to your laptop and confirm that the device screen says "IN FLIGHT."
 
@@ -378,8 +378,10 @@ In this exercise, you will use Visual Studio to deploy an Azure Function App con
 
     _Publishing an Azure Function App_
  
-1. In the ensuing "Create App Service" dialog, select the "FlySimResources" group so the Function App will be added to the same resource group as the other resources you've created, and select the storage account that you created in [Exercise 2](#Exercise2). Click the **New...** button next to "App Service Plan" and create a new App Service Plan named "FlySimFunctionsPlan" in the East US region. Then click the **Create** button.
-	
+1. In the ensuing "Create App Service" dialog, select the "FlySimResources" group so the Function App will be added to the same resource group as the other resources you've created, and select the storage account that you created in [Exercise 2](#Exercise2). Click the **New...** button next to "App Service Plan" and create a new App Service plan named "FlySimFunctionsPlan" in the East US region. Then click the **Create** button.
+
+	> Azure Function Apps deployed with an App Service plan are billed at [normal App Service rates](https://azure.microsoft.com/pricing/details/app-service/). Function Apps can also employ a consumption plan that bills based on execution time, but Functions running under the consumption plan aren't guaranteed to execute immediately. For more information on consumption plans versus App Service plans, see [Azure Functions hosting plans comparison](https://docs.microsoft.com/azure/azure-functions/functions-scale).
+
 	![Entering Function App parameters](Images/vs-create-app-service-dialog.png)
 
     _Entering Function App parameters_
@@ -423,7 +425,7 @@ The "FlySim" folder in the Cloud City download contains a Universal Windows Plat
 
 1. Repeat Steps 12 through 14 of [Exercise 3](#Exercise3) to copy the Event Hub's connection string to the clipboard.
 
-1. Return to Visual Studio and open **CoreConstants.cs** in the project's "Common" folder. Replace EVENT_HUB_ENDPOINT on line 11 with the connection string that's on the clipboard. Then save the file.
+1. Return to Visual Studio and open **CoreConstants.cs** in the project's "Common" folder. Replace EVENT_HUB_ENDPOINT on line 11 with the connection string that's on the clipboard.
 
 1. Right-click the project in Solution Explorer and use the **Add** > **New Folder** command to add a folder named "Listeners."
 
