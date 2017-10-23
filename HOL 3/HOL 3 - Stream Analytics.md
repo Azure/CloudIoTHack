@@ -99,7 +99,7 @@ In this exercise, you will create two Azure Event Hubs. One will provide input t
 
     _Creating an Event Hub_
 
-1. Wait a moment for the Event Hub to be created. Then scroll to the bottom of the blade and confirm that both Event Hubs appear in the list.
+1. Wait a moment for the Event Hub to be created. Then scroll to the bottom of the blade and confirm that both Event Hubs appear in the list. Also confirm the spelling, since the apps that connect to these Event Hubs assume that the Event Hubs are named exactly as shown.
 
     ![Event Hubs created for input and output](Images/event-hubs.png)
 
@@ -111,15 +111,15 @@ In this exercise, you will create two Azure Event Hubs. One will provide input t
 
     _Opening the shared access key_
 
-1. Click the **Copy** button next to "Connection string — primary key" to copy the connection string to the clipboard.
+1. Click the **Copy** button next to "Connection string—primary key" to copy the connection string to the clipboard.
 
     ![Copying the connection string](Images/copy-connection-string.png)
 
     _Copying the connection string_
 
-1. Go to https://gist.github.com/ and sign in with your GitHub account if you aren't already signed in. Type "Endpoint for connecting to shared input and output hubs" into the description box, and paste the connection string on the clipboard into the content box. Then click **Create public gist** to create a public gist. Leave your browser window open so you can easily retrieve the connection string yourself in Exercise 4.
+1. Go to https://gist.github.com/ and sign in with your GitHub account if you aren't already signed in. Type "Endpoint for connecting to shared input and output hubs" into the description box, and paste the connection string that's on the clipboard into the content box. Then click **Create public gist** to create a public gist. Leave your browser window open so you can easily retrieve the connection string in Exercise 4.
 
-	> Remember to delete this gist when the event is over since it contains a shared-access signature that allows anyone to connect to the event hubs you just created.
+	> Remember to delete this gist when the event is over since it contains a shared-access signature that allows anyone to connect to the Event Hubs you just created.
 
 	![Creating a gist](Images/create-gist.png)
 
@@ -252,7 +252,7 @@ To identify aircraft that are too close together, the query will ask for all air
 	SELECT plane1, plane2, distance INTO FlightDataOutput FROM Results
 	```
 
-	The query uses a [tumbling window](https://msdn.microsoft.com/library/azure/dn835055.aspx) to detect aircraft that are within four miles of each other and produce a list every two seconds. Aircraft that are within two miles of each are considered "at risk."
+	This query uses a [tumbling window](https://msdn.microsoft.com/library/azure/dn835055.aspx) to detect aircraft that are within four miles of each other and produce a list every two seconds. Aircraft that are within two miles of each are considered "at risk."
 
 	TIMESTAMP BY is an important element of the [Stream Analytics Query Language](https://msdn.microsoft.com/library/azure/dn834998.aspx). If it was omitted from the query, distance calculations would be performed based on the times that the events arrived *at the Event Hub* rather than the times specified in the data stream. TIMESTAMP BY allows you to specify a field in the input stream — in this case, the "timestamp" field — as the event time.
 
@@ -276,6 +276,8 @@ To identify aircraft that are too close together, the query will ask for all air
 
 1. Make sure **Job output start time** is set to **Now**, and then click the **Start** button to start running the job.
 
+	> Billing for a Stream Analytics job starts when the job is fully running. A Stream Analytics job configured to use one streaming unit costs a few cents an hour to run. For the latest information regarding pricing, see [Stream Analytics pricing](https://azure.microsoft.com/pricing/details/stream-analytics/).
+
     ![Specifying the job start time](Images/start-stream-analytics-job-2.png)
 
     _Specifying the job start time_
@@ -287,13 +289,13 @@ It will probably take the Stream Analytics job a minute or two to start, but tha
 
 Now it's time to connect the ATC app, which is located in the "AirTrafficSim" folder of the Cloud City download, to the Event Hubs you created in Exercise 1. The app, named **AirTrafficSim**, is a Universal Windows Platform (UWP) app. Connecting AirTrafficSim to the Event Hub named "flysim-shared-input-hub" enables it to see all the aircraft that are flying (or *will be* flying once attendees connect to it, too.) Connecting it to the Event Hub named "flysim-shared-output-hub" lets it know when two aircraft are too close together so it can color them red. Modifying the app to connect to the Event Hubs is a simple matter of copying a connection string into the source code.
 
-1. Open **AirTrafficSim.sln** in Visual Studio 2017.
+1. Open **AirTrafficSim.sln** in Visual Studio.
 
 1. Right-click the AirTrafficSim solution in Solution Explorer and select **Restore NuGet Packages** to load all the dependencies.
 
 1. Open **CoreConstants.cs** in the project's "Common" folder. Replace "SHARED_EVENT_HUB_ENDPOINT" on line 11 with the connection string you saved as a gist in Exercise 1, Step 13. Then save the file.
 
-1. Press **Ctrl+F5** to launch the app. After a short delay, AirTrafficSim will load and display an empty air traffic control map somewhere over the Nevada desert. The flight-information panel (A) shows the number of aircraft that are flying and indicates how many are "safe" and how many are "at risk" (within two miles of each other). The Altitudes panel (B) shows the altitudes of the aircraft. The traffic map (C) shows where the aircraft are, and the status bar (D) shows the current time and provides controls for zooming out to show all active flights and zooming back to the original grid coordinates. You may also zoom in and out by placing the cursor over the map and rolling the mouse wheel, or pan by dragging the map.
+1. Press **Ctrl+F5** to launch the app. After a short delay, AirTrafficSim will load and display an empty air traffic control map somewhere over the Nevada desert. The flight-information panel (A) shows the number of aircraft that are flying and indicates how many are "safe" and how many are "at risk" — that is, within two miles of each other. The Altitudes panel (B) shows the altitudes of the aircraft. The traffic map (C) shows where the aircraft are, and the status bar (D) shows the current time and provides controls for zooming out to show all active flights and showing the original grid coordinates. You can zoom in and out by clicking the **+** and **-** buttons, or by placing the cursor over the map and rolling the mouse wheel. You can also pan by dragging the map.
 
 	![The AirTrafficSim app](Images/app-environment-labels.png)
 
@@ -307,7 +309,3 @@ AirTrafficSim won't show any activity until the pilots have connected to the Eve
 Azure Stream Analytics is a powerful tool for analyzing live data streams from IoT devices or anything else that transmits data. In this lab, you created a Stream Analytics job, configured a pair of Event Hubs to provide input and receive output, and formulated a query that examines a real-time data stream and determines when two aircraft are too close together.
 
 In closing, be aware that a single Stream Analytics job can accept multiple inputs and outputs. If you wanted to create a permanent record of all the events produced by the query's tumbling window, for example, you could add a second output — a Cosmos DB output — to the Stream Analytics job. Then output would flow both to the Event Hub and to a [Cosmos DB](https://azure.microsoft.com/services/cosmos-db/) database, and you could dive into the database to view a history of close calls.
-
----
-
-Copyright 2017 Microsoft Corporation. All rights reserved. Except where otherwise noted, these materials are licensed under the terms of the MIT License. You may use them according to the license as is most appropriate for your project. The terms of this license can be found at https://opensource.org/licenses/MIT.

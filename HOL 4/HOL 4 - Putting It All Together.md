@@ -86,7 +86,7 @@ In Lab 2, you deployed an Azure Function that reads input from an Azure IoT Hub,
 	 "SharedEventHubConnection": "SHARED_EVENT_HUB_ENDPOINT",
 	```
 
-1. Navigate to the Gist URL provided to you by the instructor (for example, https://gist.github.com/scottgu) and copy the connection string from the public gist that the instructor created in the previous lab to the clipboard. Leave the browser window open so you can easily grab this connection string again.
+1. Navigate to the Gist URL provided to you by the instructor (for example, https://gist.github.com/scottgu) and copy the connection string from the public gist that the instructor created in the previous lab to the clipboard. Leave the browser window open so you can easily retrieve this connection string again.
 
 	![Copying the connection string to the clipboard](Images/copy-from-gist.png)
 
@@ -110,9 +110,9 @@ In Lab 2, you deployed an Azure Function that reads input from an Azure IoT Hub,
 
 1. Connect your MXChip to your laptop if it isn't already connected. Confirm that it's sending data by watching for "IN FLIGHT" to appear on the screen of the device. Then turn to the ATC app on the screen at the front of the room and watch for your airplane to appear. If necessary, ask the instructor to zoom out so that all aircraft are visible. Seeing your airplane on the big screen is confirmation that you did everything correctly in this exercise.
 
-	> If your airplane doesn't show up on the big screen, go to the Azure Function in the portal and check the output log to make sure it's sending and receiving data. If it is, double-check the connection string you added in Step 9 and make sure its value is the one you retrieved from the FlySim configuration portal in Step 5.
+	> If your airplane doesn't show up on the big screen, go to the Azure Function in the portal and check the output log to make sure it's sending and receiving data. If it is, double-check the connection string you added in Step 9 and make sure its value is the one you retrieved in Step 5.
 
-The Azure Function has now been updated to send flight information to the shared input hub, enabling air-traffic control to be aware of your plane's location. Now it's time to connect the Event Hub that receives output from Stream Analytics to the client app so the client app can be notified when your airplane is too close to another and can respond accordingly.
+The Azure Function has now been updated to send flight information to the shared input hub, enabling air-traffic control to be aware of your plane's location. Now it's time to connect the Event Hub that receives output from Stream Analytics to the client app so the client app can be notified when your airplane is too close to another.
 
 <a name="Exercise2"></a>
 ## Exercise 2: Connect the client app to the shared output hub ##
@@ -279,9 +279,9 @@ One of the benefits of using Azure IoT Hubs is that they support bidirectional c
 
 1. Return to the Azure Portal and open the IoT Hub that you created in Lab 1. Click **Shared access policies**, and then click **iothubowner**.
 
-	![Viewing shared-access policies for the IoT Hub](Images/open-shared-access-policies.png)
+	![Viewing shared access policies for the IoT Hub](Images/open-shared-access-policies.png)
 
-	_Viewing shared-access policies for the IoT Hub_
+	_Viewing shared access policies for the IoT Hub_
 
 1. Click the **Copy** button to the right of "Connection string—primary key" to copy the connection string to the clipboard.
 
@@ -326,9 +326,9 @@ One of the benefits of using Azure IoT Hubs is that they support bidirectional c
 
 	The ```MessageHelper``` class contains a method named ```SendMessageToDeviceAsync``` that transmits an ASCII message to the device connected to the IoT hub. The message is transmitted by calling ```SendAsync``` on an instance of the ```Microsoft.Azure.Devices.ServiceClient``` class, which is included in the NuGet package named Microsoft.Azure.Devices. A listener in the embedded code you uploaded to the device in Lab 1 handles the message and executes the appropriate commands to display the text contained in the message on the screen of the device for 5 seconds before reverting back to the normal "IN FLIGHT" display. It also lights the red LED on the board.
 
-1. In the lower-right corner of the FlySim app, there is a ComboBox control containing a list of languages. (The default is English.) The purpose of the ComboBox is to allow you to select the language used for warning messages displayed on the screen of the MXChip.
+1. In the lower-right corner of the FlySim app, there is a ```ComboBox``` control containing a list of languages. The default is English. The purpose of the ```ComboBox``` is to allow you to select the language used for warning messages displayed on the screen of the MXChip.
 
-	The app retrieves a list of supported languages from the [Translator Text API](https://www.microsoft.com/translator/translatorapi.aspx), which is one of more than two dozen services available in [Microsoft Cognitive Services](https://azure.microsoft.com/services/cognitive-services/). The Translator Text API can translate text from English into more than 50 different languages, including two dialects of Klingon. (Yes, Klingon!) It can also provide a list of languages it can translate to, which forms the basis for the list you see in the ComboBox control.
+	The app retrieves a list of supported languages from the [Translator Text API](https://www.microsoft.com/translator/translatorapi.aspx), which is one of more than two dozen services available in [Microsoft Cognitive Services](https://azure.microsoft.com/services/cognitive-services/). The Translator Text API can translate text from English into more than 50 different languages. It can also provide a list of languages it can translate to, which forms the basis for the list you see in the ```ComboBox``` control.
 
 	In order to call the Translator Text API, you must go to the Azure Portal and obtain an API key. Calls to the Translator Text API work right now because **CoreConstants.cs** contains a key that was provided for you. Before going further, you need to obtain a key of your own and replace the one in **CoreConstants.cs**.
 
@@ -388,7 +388,7 @@ One of the benefits of using Azure IoT Hubs is that they support bidirectional c
     }
 	```
 
-	This method calls ```TranslationHelper.GetTextTranslationAsync``` to convert the warning message to the language selected in the ComboBox (unless English is selected, in which case no translation is necessary). Then it calls ```MessageHelper.SendMessageToDeviceAsync``` to send the message to the device.
+	This method calls ```TranslationHelper.GetTextTranslationAsync``` to convert the warning message to the language selected in the ```ComboBox``` (unless English is selected, in which case no translation is necessary). Then it calls ```MessageHelper.SendMessageToDeviceAsync``` to send the message to the device.
 
 1. Finish up by building the solution and verifying that it builds without errors.
 
@@ -437,9 +437,9 @@ In this exercise, you will join other pilots in the room to fly your airplane th
 
 	_Warning messages displayed in English, French, and Polish_
 
-1. Continue flying until you're comfortable that your app — and your device — are working as expected.
+1. Continue flying until you're comfortable that your app — and your device — are working as expected. If your airplane freezes on the screen, try unplugging your MXChip and plugging it back in again. And if, at any time, you would like to reset your aircraft to its original position, restart the Function App as you did at the beginning of this exercise.
 
-When you're finished, unplug your MXChip from your laptop to stop the flow of messages to the IoT Hub. Also go into the Azure Portal and stop the Function App since your subscription incurs charges while it's running, even if it isn't processing messages — that is, even when the VM that hosts the Function App is idle. It is possible to configure a Function App so that you are only charged when an Azure Function inside it executes, but Function Apps configured that way are not guaranteed to execute immediately. For more information, refer to https://docs.microsoft.com/en-us/azure/azure-functions/functions-scale.
+When you're finished, unplug your MXChip from your laptop to stop the flow of messages to the IoT Hub. Also go into the Azure Portal and stop the Function App since your subscription incurs charges while it's running, even if it isn't processing messages — that is, even when the VM that hosts the Function App is idle. If you want to stop all charges for all of the Azure resources you deployed today, simply go into the portal and delete the "FlySimResources" resource group. But be careful, because once a resource group is deleted, it can't be undeleted.
 
 <a name="Summary"></a>
 ## Summary ##
@@ -455,7 +455,3 @@ Your MXChip transmits messages containing accelerometer data to an Azure IoT Hub
 This a great example of how enterprise developers build end-to-end solutions by connecting Azure services and utilizing those services from their code. And the fact that you could assemble it all in one day, from scratch, is indicative of the richness of the Azure ecosystem and of the tools that support it.
 
 Cloud City — over and out!
-
----
-
-Copyright 2017 Microsoft Corporation. All rights reserved. Except where otherwise noted, these materials are licensed under the terms of the MIT License. You may use them according to the license as is most appropriate for your project. The terms of this license can be found at https://opensource.org/licenses/MIT.
