@@ -357,7 +357,9 @@ You can write Azure Functions in the Azure Portal, or you can write them in Visu
 
 	> If Visual Studio prompts you to download the Azure Functions CLI tools, answer yes. You may then be warned that Windows Firewall has "blocked some features of this app." If that happens, click **Allow access** to unblock the CLI tools. 
 
-1. Wait for execution to stop at the breakpoint on line 27. Then hover the cursor over the ```inputMessage``` parameter to view the JSON payload sent from the device to the IoT Hub and input to the Azure Function. 
+1. Wait for execution to stop at the breakpoint on line 27. Then hover the cursor over the ```inputMessage``` parameter to view the JSON payload sent from the device to the IoT Hub and input to the Azure Function.
+
+	> If the breakpoint is never hit but your MXChip is plugged in and transmitting data, then the Azure Function isn't properly connected to the IoT Hub. If that's the case, confirm that the setting named "IoTHubConnection" in **local.settings.json** contains the connection string and IoT Hub name shown in Step 10 of this exercise.
 
 	![Viewing the input message in the debugger](Images/vs-view-debug-info.png)
 
@@ -407,6 +409,8 @@ In this exercise, you will use Visual Studio to deploy an Azure Function App con
     _Adding application settings_
  
 1. Make sure your MXChip is plugged in and transmitting data. Then click the Function name in the menu on the left. Watch the output log at the bottom of the screen and confirm that the Function is sending and receiving data. A new entry should appear in the output log every couple of seconds. Observe that the JSON output includes properties such as "Heading" and "Altitude."
+
+	> If the log shows no output but your MXChip is plugged in and transmitting data, then the Azure Function isn't properly connected to the IoT Hub. If that's the case, review Step 5 of this exercise and confirm that the application setting named "IoTHubConnection" contains the connection string and IoT Hub name shown in Exercise 3, Step 10.
 
 	![The FlySimIoTFlightData Function running in the portal](Images/portal-function-running.png)
 
@@ -550,6 +554,8 @@ The "FlySim" folder in the Cloud City download contains a Universal Windows Plat
     _Restarting the Function App_
 
 1. Make sure your MXChip is plugged into your laptop. Then return to Visual Studio and press **Ctrl+F5** to launch FlySim. Confirm that the app starts and that after a few seconds, an "aircraft" labeled with the display name you entered in Lab 1 appears on the screen. Maximize the window so you can see all the readouts and controls.
+
+	> If your aircraft never appears in the app but your MXChip is plugged in and transmitting data, review Step 4 of this exercise and confirm that the connection string you pasted into **CoreConstants.cs** is the one shown in Exercise 3, Step 14. Also review Exercise 4, Step 5 and make sure the application setting named "EventHubConnection" contains the same connection string.
 
 	![FlySim showing Amelia Earhart over the Nevada desert](Images/app-in-flight.png)
 

@@ -94,7 +94,7 @@ You have already received a package containing an MXChip IoT DevKit and a USB ca
 
     _Connecting the device to WiFi_
 
-1. Confirm that the device successfully connects to WiFi. Make note of the IP address it was assigned.
+1. Confirm that the device successfully connects to WiFi and make note of the IP address it was assigned. If for any reason you are unable to connect to WiFi this way, try configuring it manually using the [instructions provided here](https://github.com/BretStateham/azure-iot-devkit-manual-wifi).
 
 	![A webpage displayed the connected networks SSID and IP Address for the MXChip, after it has joined a wireless network.](Images/connecting-to-wifi.png)
 

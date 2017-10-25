@@ -110,7 +110,7 @@ In Lab 2, you deployed an Azure Function that reads input from an Azure IoT Hub,
 
 1. Connect your MXChip to your laptop if it isn't already connected. Confirm that it's sending data by watching for "IN FLIGHT" to appear on the screen of the device. Then turn to the ATC app on the screen at the front of the room and watch for your airplane to appear. If necessary, ask the instructor to zoom out so that all aircraft are visible. Seeing your airplane on the big screen is confirmation that you did everything correctly in this exercise.
 
-	> If your airplane doesn't show up on the big screen, go to the Azure Function in the portal and check the output log to make sure it's sending and receiving data. If it is, double-check the connection string you added in Step 9 and make sure its value is the one you retrieved in Step 5.
+	> If your airplane doesn't show up on the big screen, go to the Azure Function in the portal and check the output log to make sure it's sending and receiving data. If it's not, unplug the MXChip and plug it back in. If the Azure Function *is* sending and receiving data, double-check the application setting named "SharedEventHubConnection" you added in Step 9 of this exercise and make sure its value is the connection string you retrieved in Step 5.
 
 The Azure Function has now been updated to send flight information to the shared input hub, enabling air-traffic control to be aware of your plane's location. Now it's time to connect the Event Hub that receives output from Stream Analytics to the client app so the client app can be notified when your airplane is too close to another.
 
@@ -426,6 +426,8 @@ In this exercise, you will join other pilots in the room to fly your airplane th
 	_Two airplanes approaching each other_
 
 1. When you get within two miles of another aircraft, confirm that your airplane turns red in the client app AND in the ATC app.
+
+	> If your airplane doesn't turn red in the client app, review Exercise 2, Step 4 and confirm that the field named ```SharedAirTrafficEventHubEndpoint``` in **CoreConstants.cs** is assigned the connection string you retrieved in Exercise 2, Step 3.
 
 	![Two airplanes within two miles of each other](Images/two-at-risk.png)
 
