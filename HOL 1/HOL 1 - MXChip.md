@@ -107,7 +107,7 @@ You have already received a package containing an MXChip IoT DevKit and a USB ca
 
     _Connected!_
 
-1. Go to https://microsoft.github.io/azure-iot-developer-kit/versions/ and follow the instructions there to make sure you are running the latest version of the firmware. The firmware is constantly being improved, and the boards don't always come with the latest version of the firmware installed.
+1. Go to [Versions and Release Notes](https://aka.ms/iot-kit-firmware) and follow the instructions there to make sure you are running the latest version of the firmware. The firmware is constantly being improved, and the boards don't always come with the latest version of the firmware installed.
 
 Now that the device is connected to WiFi, it will automatically connect again if it is powered off and back on. If you later decide to connect it to another network, simply repeat Steps 3 through 8 of this exercise.
 
