@@ -25,6 +25,8 @@ The following are required to complete this lab:
 - An active Microsoft Azure subscription. If you don't have one, [sign up for a free trial](http://aka.ms/WATK-FreeTrial)
 - An available WiFi connection or mobile hotspot
 
+Note: For developers work on a Mac, please see [this article](https://docs.microsoft.com/en-us/windows/uwp/porting/setting-up-your-mac-with-windows-10) for installing Windows 10 to enable building and running the UWP portion of this lab.
+
 ---
 
 <a name="Exercises"></a>
