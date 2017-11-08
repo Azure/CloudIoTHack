@@ -4,9 +4,11 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
-void parseTwinMessage(const char *);
-bool readMessage(int, char *);
+void parseTwinMessage(DEVICE_TWIN_UPDATE_STATE, const char *);
+bool readMessage(int, char *, size_t);
+
 void sensorInit(void);
+
 void blinkLED(void);
 void blinkLEDLonger(void);
 void blinkSendConfirmation(void);
