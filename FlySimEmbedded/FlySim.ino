@@ -151,28 +151,31 @@ void setup()
 
 void loop()
 {
-    if (messageSending && 
-        (int)(SystemTickCounterRead() - send_interval_ms) >= getInterval())
+    if (hasWifi)
     {
-        char messagePayload[MESSAGE_MAX_LEN];
-
-        bool temperatureAlert = readMessage(messageCount++, messagePayload, MESSAGE_MAX_LEN);
-        EVENT_INSTANCE* message = DevKitMQTTClient_Event_Generate(messagePayload, MESSAGE);
-        DevKitMQTTClient_Event_AddProp(message, "temperatureAlert", temperatureAlert ? "true" : "false");
-        if (DevKitMQTTClient_SendEventInstance(message))
+        if (messageSending && 
+            (int)(SystemTickCounterRead() - send_interval_ms) >= getInterval())
         {
-            LogInfo("Flight data sent to your Azure IoT Hub successfully.");
+            char messagePayload[MESSAGE_MAX_LEN];
+
+            bool temperatureAlert = readMessage(messageCount++, messagePayload, MESSAGE_MAX_LEN);
+            EVENT_INSTANCE* message = DevKitMQTTClient_Event_Generate(messagePayload, MESSAGE);
+            DevKitMQTTClient_Event_AddProp(message, "temperatureAlert", temperatureAlert ? "true" : "false");
+            if (DevKitMQTTClient_SendEventInstance(message))
+            {
+                LogInfo("Flight data sent to your Azure IoT Hub successfully.");
+            }
+            else
+            {
+                LogInfo("Failed to send flight data to your Azure IoT Hub.");
+            }
+
+            send_interval_ms = SystemTickCounterRead();
         }
         else
         {
-            LogInfo("Failed to send flight data to your Azure IoT Hub.");
+            DevKitMQTTClient_Check();
         }
-
-        send_interval_ms = SystemTickCounterRead();
-    }
-    else
-    {
-        DevKitMQTTClient_Check();
     }
     delay(10);
 }
