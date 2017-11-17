@@ -180,19 +180,19 @@ bool readMessage(int messageId, char *payload, size_t len)
 
     json_object_set_string(root_object, "timestamp", buffer);
     
-    json_object_set_number(root_object, "temperature", temperature);
+    json_object_set_number(root_object, "temperature", ceil(temperature));
     if(temperature > TEMPERATURE_ALERT)
     {
         temperatureAlert = true;
     }
 
-    json_object_set_number(root_object, "humidity", humidity);
+    json_object_set_number(root_object, "humidity", ceil(humidity));
 
     json_object_set_number(root_object, "x", xMovement);
     json_object_set_number(root_object, "y", yMovement);
     json_object_set_number(root_object, "z", zMovement);
     
-    char *serialized_string = json_serialize_to_string_pretty(root_value);
+    char *serialized_string = json_serialize_to_string(root_value);
     
     strncpy(payload, serialized_string, len);
     payload[len - 1] = 0;
