@@ -1,8 +1,0 @@
-{
-    "azureCliLocation": "C:\\Program Files (x86)\\Microsoft SDKs\\Azure\\CLI2\\wbin\\az.cmd",
-    "iotHubName": "flysimiot0002-iothub-0bad",
-    "subscription": "97844bcc-b3f5-4a3a-b1e6-7a2f2e8c0c82",
-    "resourceGroup": "FlySimResources",
-    "deviceConnectionString": "HostName=flysimiot0002-iothub-0bad.azure-devices.net;DeviceId=AZ3166;SharedAccessKey=U+aT6qPsTyUP2b7nMyc2a7//IG6lHUDPWAhujg0axck=",
-    "deviceId": "AZ3166"
-}

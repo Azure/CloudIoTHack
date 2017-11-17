@@ -1,17 +1,15 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 
-#include "HTS221Sensor.h"
-#include "AzureIotHub.h"
 #include "Arduino.h"
-#include <ArduinoJson.h>
-#include "config.h"
+#include "AzureIotHub.h"
+
+#include "HTS221Sensor.h"
+#include "LSM6DSLSensor.h"
 #include "RGB_LED.h"
-#include "AZ3166WiFi.h"
-#include "Sensor.h"
-#include "SystemVersion.h"
-#include "http_client.h"
-#include "telemetry.h"
+
+#include "parson.h"
+#include "config.h"
 
 #define RGB_LED_BRIGHTNESS 32
 
@@ -54,24 +52,40 @@ void blinkSendConfirmation()
     rgbLed.turnOff();
 }
 
-void parseTwinMessage(const char *message)
+void parseTwinMessage(DEVICE_TWIN_UPDATE_STATE updateState, const char *message)
 {
-    StaticJsonBuffer<MESSAGE_MAX_LEN> jsonBuffer;
-    JsonObject &root = jsonBuffer.parseObject(message);
-    if (!root.success())
+    JSON_Value *root_value;
+    root_value = json_parse_string(message);
+    if (json_value_get_type(root_value) != JSONObject)
     {
+        if (root_value != NULL)
+        {
+            json_value_free(root_value);
+        }
         LogError("parse %s failed", message);
         return;
     }
+    JSON_Object *root_object = json_value_get_object(root_value);
 
-    if (root["desired"]["interval"].success())
+    double val = 0;
+    if (updateState == DEVICE_TWIN_UPDATE_COMPLETE)
     {
-        interval = root["desired"]["interval"];
+        JSON_Object *desired_object = json_object_get_object(root_object, "desired");
+        if (desired_object != NULL)
+        {
+            val = json_object_get_number(desired_object, "interval");
+        }
     }
-    else if (root.containsKey("interval"))
+    else
     {
-        interval = root["interval"];
+        val = json_object_get_number(root_object, "interval");
     }
+    if (val > 500)
+    {
+        interval = (int)val;
+        LogInfo(">>>Device twin updated: set interval to %d", interval);
+    }
+    json_value_free(root_value);
 }
 
 void sensorInit()
@@ -98,7 +112,6 @@ void setMotionGyroSensor()
      
     snprintf(buff, 128, "IN FLIGHT: \r\n x:%d \r\n y:%d \r\n z:%d  ", axes[0], axes[1], axes[2]);
     Screen.print(buff);
-    
 }
 
 float readTemperature()
@@ -139,7 +152,7 @@ float readZMovement()
     return zMovement;
 }
 
-bool readMessage(int messageId, char *payload)
+bool readMessage(int messageId, char *payload, size_t len)
 {
     float temperature = readTemperature();
     float humidity = readHumidity();
@@ -150,12 +163,12 @@ bool readMessage(int messageId, char *payload)
     float yMovement = readYMovement();
     float zMovement = readZMovement();
 
-    StaticJsonBuffer<MESSAGE_MAX_LEN> jsonBuffer;
-    JsonObject &root = jsonBuffer.createObject();
+    JSON_Value *root_value = json_value_init_object();
+    JSON_Object *root_object = json_value_get_object(root_value);
 
-    root["deviceId"] = DISPLAY_NAME;
-    root["messageId"] = messageId;
-
+    json_object_set_string(root_object, "deviceId", DISPLAY_NAME);
+    json_object_set_number(root_object, "messageId", messageId);
+    
     bool temperatureAlert = false;
 
     time_t rawtime;
@@ -165,58 +178,27 @@ bool readMessage(int messageId, char *payload)
     timeinfo = localtime (&rawtime);  
     strftime (buffer, 80,"%m/%d/%y %H:%M:%S",timeinfo);
 
-    root["timestamp"] = buffer;
-
-    if(temperature != temperature)
+    json_object_set_string(root_object, "timestamp", buffer);
+    
+    json_object_set_number(root_object, "temperature", ceil(temperature));
+    if(temperature > TEMPERATURE_ALERT)
     {
-        root["temperature"] = NULL;
-    }
-    else
-    {
-        root["temperature"] = temperature;
-        if(temperature > TEMPERATURE_ALERT)
-        {
-            temperatureAlert = true;
-        }
+        temperatureAlert = true;
     }
 
-    if(humidity != humidity)
-    {
-        root["humidity"] = NULL;
-    }
-    else
-    {
-        root["humidity"] = humidity;
-    }
+    json_object_set_number(root_object, "humidity", ceil(humidity));
 
-    if (xMovement != xMovement)
-    {
-        root["x"] = NULL;
-    }
-    else
-    {
-        root["x"] = xMovement;
-    }
+    json_object_set_number(root_object, "x", xMovement);
+    json_object_set_number(root_object, "y", yMovement);
+    json_object_set_number(root_object, "z", zMovement);
+    
+    char *serialized_string = json_serialize_to_string(root_value);
+    
+    strncpy(payload, serialized_string, len);
+    payload[len - 1] = 0;
+    
+    json_free_serialized_string(serialized_string);
+    json_value_free(root_value);
 
-    if (yMovement != yMovement)
-    {
-        root["y"] = NULL;
-    }
-    else
-    {
-        root["y"] = yMovement;
-    }
-
-    if (zMovement != zMovement)
-    {
-        root["z"] = NULL;
-    }
-    else
-    {
-        root["z"] = zMovement;
-    }
-
-    root.printTo(payload, MESSAGE_MAX_LEN);
-
-    return true;
+    return temperatureAlert;
 }
