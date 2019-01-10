@@ -1,0 +1,15 @@
+{
+    "folders": [
+        {
+            "path": "FlySimEmbedded"
+        },
+        {
+            "path": "FlySimFunctions"
+        }
+    ],
+    "settings": {
+        "IoTWorkbench.BoardId": "devkit",
+        "IoTWorkbench.DevicePath": "FlySimEmbedded",
+        "IoTWorkbench.FunctionPath": "FlySimFunctions"
+    }
+}
