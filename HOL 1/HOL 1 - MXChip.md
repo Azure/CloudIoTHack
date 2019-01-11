@@ -164,7 +164,7 @@ In this exercise, you will compile an embedded C++ app that transmits events to 
 
 1. Now it's time to upload code to the device to have it transmit events to the IoT Hub. Open the command palette and select **Azure IoT Device Workbench: Upload Device Code**.
 
-	![IoT Device Workbench: Device -> Upload](media/iot-workbench-device-upload.png)
+	![IoT Device Workbench: Device -> Upload](Images/iot-workbench-device-upload.png)
 
 1. VS Code then starts verifying and uploading the code to your DevKit.
 
