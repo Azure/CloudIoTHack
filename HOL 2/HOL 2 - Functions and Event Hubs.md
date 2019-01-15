@@ -139,19 +139,6 @@ You can write Azure Functions in the Azure Portal, or you can write them in Visu
 
     _Copying the connection string to the clipboard_
 
-1. Return to Visual Studio and replace EVENT_HUB_ENDPOINT in **local.settings.json** with the value on the clipboard.
-
-1. Return to the "FlySimResources" resource group in the Azure Portal and click the storage account that you created in [Exercise 2](#Exercise2).
-
-	![Opening a blade for the storage account](Images/open-storage-account.png)
-
-	_Opening a blade for the storage account_
-
-1. Click **Access keys**, and then click the **Copy** button next to the first connection string to copy the connection string to the clipboard.
-
-	![Copying the connection string to the clipboard](Images/portal-copy-storage-key.png)
-
-    _Copying the connection string to the clipboard_
 
 1. Return to Visual Studio Code and add a new setting for the Azure Functions App provisioned in HOL1.
 	Enter the new setting key of **EventHubConnection** and use the connection string you copied in previous seting into the setting value.
