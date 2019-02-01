@@ -177,6 +177,8 @@ The Azure Function that you wrote is now running in cloud, transforming accelero
 
 Open the example download folder. The "FlySim" folder in the Cloud City download contains a Universal Windows Platform (UWP) app that you can run to fly a simulated aircraft on your laptop using your MXChip. Before you run it, you need to make some modifications to connect it to the Event Hub that receives data from the Azure Function.
 
+> To quickly go to the project download folder, you could right click **FlySim.ino**, and select **Reveal in Explorer**.
+
 1. Go to the "FlySim" folder included in the lab download and open **FlySim.sln** in Visual Studio.
 
 1. Right-click the FlySim solution in Solution Explorer and select **Restore NuGet Packages** to load all the dependencies.

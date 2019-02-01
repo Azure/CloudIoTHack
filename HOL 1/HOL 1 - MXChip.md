@@ -90,12 +90,17 @@ In this exercise, you will open an project of **Air Traffic Simulator** in Visua
 	![IoT Device Workbench, Examples window](Images/iot-workbench-examples.png)
 
 1. Find **Air Traffic Simulator** and click **Open Sample** button. A new VS Code window with a project folder in it opens.
+
+	![IoT Device Workbench: open workspace](Images/open-workspace.png)
+
+	>The workspace contains the source code for device and Azure Functions. Please follow the [guide](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions) of Azure Functions to install **Azure Functions Extension** and its prerequisites.
  
 1. In the solution window, open the command palette and select **Azure IoT Device Workbench: Provision Azure Services...**.
 
 	![IoT Device Workbench: Cloud -> Provision](Images/iot-workbench-cloud-provision.png)
 
 1. If you haven't login to Azure in Visual Studio Code before, the following will be pop-up to guide you for Azure sign-in. 
+
 	![pop-up window for Azure sign-in](Images/vs-azure-login.png)
 
 1. Click **Copy & Open** and go to the "Device Login" screen in the browser, paste the login code into the input field, and click **Continue**.
