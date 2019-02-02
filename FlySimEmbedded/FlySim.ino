@@ -159,15 +159,16 @@ void loop()
             char messagePayload[MESSAGE_MAX_LEN];
 
             bool temperatureAlert = readMessage(messageCount++, messagePayload, MESSAGE_MAX_LEN);
+            LogInfo("Info: Sending flight data: %s", messagePayload);
             EVENT_INSTANCE* message = DevKitMQTTClient_Event_Generate(messagePayload, MESSAGE);
             DevKitMQTTClient_Event_AddProp(message, "temperatureAlert", temperatureAlert ? "true" : "false");
             if (DevKitMQTTClient_SendEventInstance(message))
             {
-                LogInfo("Flight data sent to your Azure IoT Hub successfully.");
+                LogInfo("Info: Flight data sent to your Azure IoT Hub successfully.");
             }
             else
             {
-                LogInfo("Failed to send flight data to your Azure IoT Hub.");
+                LogInfo("Info: Failed to send flight data to your Azure IoT Hub.");
             }
 
             send_interval_ms = SystemTickCounterRead();
