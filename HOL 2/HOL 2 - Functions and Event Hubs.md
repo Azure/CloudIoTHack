@@ -21,7 +21,7 @@ The following are required to complete this lab:
 
 - An [MXChip IoT DevKit](https://microsoft.github.io/azure-iot-developer-kit/)
 - A computer running [Windows 10 Anniversary Edition](https://www.microsoft.com/en-us/software-download/windows10) or higher
-- [Visual Studio 2017](https://www.visualstudio.com/downloads/) Community edition version 15.3 or higher with the UWP and Azure workloads installed
+- [Visual Studio 2017](https://www.visualstudio.com/downloads/) Community edition version 15.3 or higher with the UWP and Azure workloads installed. This [doc](https://docs.microsoft.com/en-us/windows/uwp/debug-test-perf/test-with-the-emulator) provides the guide on how to setup environment.
 - An active Microsoft Azure subscription. If you don't have one, [sign up for a free trial](http://aka.ms/WATK-FreeTrial)
 - An available WiFi connection or mobile hotspot
 - Finish the [Getting Started Guide](https://github.com/Microsoft/vscode-iot-workbench/blob/master/docs/iot-devkit/devkit-get-started.md) to:
@@ -108,13 +108,15 @@ How much do Azure Event Hubs cost? The **Standard** pricing tier that you select
 You can write Azure Functions in the Azure Portal, or you can write them in Visual Studio Code. In this exercise, you will use Visual Studio Code to deploy an existing Azure Function that transforms raw accelerometer data arriving at the IoT Hub you created in Lab 1 into flight data denoting the disposition of an aircraft, and that transmits the transformed data to the Event Hub you created in [Exercise 1](#Exercise1). 
 
 
-1. In Visual Studio code, open the workspace of **FlySim** and open the folder of C# Azure Functions named "FlySimFunctions".  
+1. Azure Functions extension is required for this exercise. Please install **Azure Functions extension** for Visual Studio Code as well as its **Prerequisites** from this [page](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions).
+
+1. In Visual Studio code, open the workspace of **FlySim** and navigate to the folder of C# Azure Functions named "FlySimFunctions".  
 
 	![Creating a new Azure Functions project](Images/vs-add-project.png)
 
     _Open Azure Functions_
 
-1. If you see the following notification to resolve dependencies, please click **Restore**.
+1. If you see the following notification to resolve dependencies, please click **Restore**. 
 
 	![resolve dependency](Images/resolve_dependency.png)
 
