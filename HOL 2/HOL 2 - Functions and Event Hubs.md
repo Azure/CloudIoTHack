@@ -123,11 +123,15 @@ You can write Azure Functions in the Azure Portal, or you can write them in Visu
 	Take a moment to examine the function code in *FlySimIoTFlightData.cs* , beginning with the method's parameter list. ```inputMessage``` holds the JSON-formatted message that arrived at the IoT Hub, while ```outputMessage``` represents the message (or messages) to be transmitted to the Event Hub. After deserializing the input message, this Azure Function computes new flight data — airspeed, heading, altitude, and so on — from the accelerometer values passed by the device. Then it serializes the flight data into JSON and outputs it to the Event Hub by calling ```AddAsync``` on the ```outputMessage``` parameter.
 
 
-1. Return to the "FlySimResources" resource group in the Azure Portal and click the Event Hub that you created in [Exercise 1](#Exercise1).
+1. Return to the "FlySimResources" resource group in the Azure Portal and click the Event Hub that you created in [Exercise 1](#Exercise1). Go to the Event Hub instance **flysim**.
 
 	![Opening a blade for the Event Hub](Images/open-event-hub-2.png)
 
 	_Opening a blade for the event hub_
+
+	![Opening Event Hub Instance](Images/event_hub_instance.png)
+
+	_Click the event hub instance_
 
 1. Click **Shared access policies**, followed by **RootManageSharedAccessKey**.
 
