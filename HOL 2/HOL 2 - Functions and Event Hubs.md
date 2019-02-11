@@ -133,7 +133,7 @@ You can write Azure Functions in the Azure Portal, or you can write them in Visu
 
 	_Click the event hub instance_
 
-1. Click **Shared access policies**, followed by **RootManageSharedAccessKey**.
+1. Click **Shared access policies**, add SAS Policy of **RootManageSharedAccessKey** with **Manage** permission.
 
 	![Opening RootManageSharedAccessKey](Images/portal-click-event-hub-policy.png)
 
