@@ -82,11 +82,6 @@ In Lab 2, you deployed an Azure Function that reads input from an Azure IoT Hub,
 
 	The statement that you added transmits the same flight data to the shared Event Hub that is already being transmitted to the "private" Event Hub you created in Lab 2.
 
-1. Open **local.settings.json** and insert the following statement directly below   "EventHubConnection:"
-
-	```Json
-	 "SharedEventHubConnection": "SHARED_EVENT_HUB_ENDPOINT",
-	```
 
 1. Navigate to the Gist URL provided to you by the instructor (for example, https://gist.github.com/scottgu) and copy the connection string from the public gist that the instructor created in the previous lab to the clipboard. Leave the browser window open so you can easily retrieve this connection string again.
 
@@ -94,21 +89,14 @@ In Lab 2, you deployed an Azure Function that reads input from an Azure IoT Hub,
 
 	_Copying the connection string to the clipboard_
 
-1. Return to Visual Studio and replace "SHARED_EVENT_HUB_ENDPOINT" in **local.settings.json** with the value on the clipboard. 
 
-1. Save your changes and rebuild the solution to ensure that it builds successfully. Then right-click the project in Solution Explorer and use the **Publish...** command to publish the updated Azure Function.
+1. The next step is to add the shared input hub's connection string to the Function App's application settings. Go to Visual Studio Code and open the Function App panel. 
 
-1. The next step is to add the shared input hub's connection string to the Function App's application settings. Go to the Azure Portal and open the Function App that you published in Lab 2. Then click **Application settings**.
+1. Click **Add New Setting...** in the "Application settings" section. Add a setting named "SharedEventHubConnection" and set its value equal to the connection string that you copied to the clipboard in Step 3. 
 
-	![Opening application settings](Images/open-application-settings.png)
+	![Add function setting](Images/function_settings.png)
 
-	_Opening application settings_
-
-1. Click **+ Add new setting** in the "Application settings" section. Add a setting named "SharedEventHubConnection" and set its value equal to the connection string that you copied to the clipboard in Step 5. When you're finished, click **Save** at the top of the blade.
-
-	![Adding an application setting](Images/new-application-setting.png)
-
-    _Adding an application setting_
+1. Now you will use Visual Studio Code to deploy the Azure Function again. In Visual Studio Code, Open the command palette and select **Azure IoT Device Workbench: Deploy to Azure...**. Wait util the deployment finished.
 
 1. Connect your MXChip to your laptop if it isn't already connected. Confirm that it's sending data by watching for "IN FLIGHT" to appear on the screen of the device. Then turn to the ATC app on the screen at the front of the room and watch for your airplane to appear. If necessary, ask the instructor to zoom out so that all aircraft are visible. Seeing your airplane on the big screen is confirmation that you did everything correctly in this exercise.
 

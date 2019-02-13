@@ -159,6 +159,7 @@ void loop()
             char messagePayload[MESSAGE_MAX_LEN];
 
             bool temperatureAlert = readMessage(messageCount++, messagePayload, MESSAGE_MAX_LEN);
+            LogInfo("Sending flight data: %s", messagePayload);
             EVENT_INSTANCE* message = DevKitMQTTClient_Event_Generate(messagePayload, MESSAGE);
             DevKitMQTTClient_Event_AddProp(message, "temperatureAlert", temperatureAlert ? "true" : "false");
             if (DevKitMQTTClient_SendEventInstance(message))

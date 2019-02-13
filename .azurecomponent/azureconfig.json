@@ -1,0 +1,28 @@
+{
+    "componentConfigs": [
+        {
+            "id": "69873a09-475b-8076-6ec4-4bd8940e9e20",
+            "folder": "",
+            "name": "",
+            "dependencies": [],
+            "type": "IoTHub"
+        },
+        {
+            "id": "28003ce8-f2f6-d28a-0647-ded467e7ac7c",
+            "folder": "FlySimFunctions",
+            "name": "",
+            "dependencies": [
+                {
+                    "id": "69873a09-475b-8076-6ec4-4bd8940e9e20",
+                    "type": 1
+                }
+            ],
+            "type": "AzureFunctions",
+            "componentInfo": {
+                "values": {
+                    "functionLanguage": "C#"
+                }
+            }
+        }
+    ]
+}

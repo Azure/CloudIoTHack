@@ -11,10 +11,11 @@ This repo contains content for the Cloud City IoT Hack, an event that provides d
 - [HOL 3](HOL%203/HOL%203%20-%20Stream%20Analytics.md) - The instructor creates a pair of Event Hubs and deploys a Stream Analytics job that analyzes all the air traffic in the room for aircraft that are within two miles of each another. He or she also deploys a UWP app that shows all the air traffic. **THIS HOL IS INSTRUCTOR-LED**.
 - [HOL 4](HOL%204/HOL%204%20-%20Putting%20It%20All%20Together.md) - Attendees modify the Azure Function they deployed in HOL 2 to transmit flight data to the input hub used by Stream Analytics. They also connect the client app to the Stream Analytics output and modify the app to transmit warning messages back to the MXChip when their aircraft are within two miles of another.
 
-The repo also has four source-code folders:
+The repo also has five source-code folders:
 
 - FlySim - A Visual Studio 2017 solution containing the client app that attendees use to fly simulated airplanes.
 - FlySimEmbedded - The code attendees upload to the MXChip to program it to send accelerometer data to an Azure IoT Hub.
+- FlySimFunctions - The source code of Azure Functions to process and send accelerometer data from the created Azure IoT Hub into Azure Event Hub.
 - AirTrafficSim - A Visual Studio 2017 solution containing the air-traffic control (ATC) app that shows all the airplanes in flight and highlights those that are within two miles of each other.
 - FlySimTest - A Visual Studio 2017 solution containing a command-line app for injecting simulated aircraft into AirTrafficSim. It's great for testing, and also for adding airplanes to the ATC sector if there aren't enough attendees at the event to make things interesting. To prepare it for use, replace SHARED_EVENT_HUB_ENDPOINT on line 54 with the endpoint connection string for the Event Hub that provides input to Stream Analytics. By default, it injects 20 airplanes. You can inject more (or less) by specifying the desired number as a command-line parameter.
 
