@@ -90,6 +90,7 @@ In this exercise, you will open an project of **Air Traffic Simulator** in Visua
 	![IoT Device Workbench, Examples window](Images/iot-workbench-examples.png)
 
 1. Find **Air Traffic Control Simulator** and click **Open Sample** button. 
+
 	![IoT Device Workbench: open example](Images/vscode-open-example.png)
 
 1. A new VS Code window with a project folder in it opens.
