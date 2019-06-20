@@ -57,7 +57,7 @@ In Lab 2, you deployed an Azure Function that reads input from an Azure IoT Hub,
 1. Add the following parameter to the ```Run``` method:
 
 	```C#
-	[EventHub("sharedouteventhub", Connection = "SharedEventHubConnection")] IAsyncCollector<string> sharedOutputMessage,
+	[EventHub("flysim-shared-input-hub", Connection = "SharedEventHubConnection")] IAsyncCollector<string> sharedOutputMessage,
 	```
 
 	The modified method signature should look like this:
@@ -111,7 +111,7 @@ In Lab 3, the instructor created an Event Hub and configured Stream Analytics to
 
 1. Open the FlySim solution from Lab 2 in Visual Studio.
 
-1. Open **CoreConstants.cs** in the "Common" folder, and add the following statements after the statements that declare static strings named ```FlightActivityEventHubEndpoint``` and ```FlightActivityEventHubName```:
+1. Open **CoreConstants.cs** in the "Common" folder, and add the following statements after the statements that declare static strings named ```SharedAirTrafficEventHubEndpoint``` and ```SharedAirTrafficHubName```:
 
 	```C#
 	public static string SharedAirTrafficEventHubEndpoint = "SHARED_EVENT_HUB_ENDPOINT";

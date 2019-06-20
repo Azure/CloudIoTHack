@@ -27,8 +27,8 @@ namespace FlySimFunctions
         private static double _roll = 0.0;
 
         [FunctionName("FlySimIoTFlightData")]
-        public async static Task Run([IoTHubTrigger("%eventHubConnectionPath%", Connection = "eventHubConnectionString")]EventData message, [EventHub("outeventhub", Connection = "EventHubConnection")] IAsyncCollector<string> outputMessage, ILogger log)
-        {
+        public async static Task Run([IoTHubTrigger("%eventHubConnectionPath%", Connection = "eventHubConnectionString")]EventData message, [EventHub("flysim", Connection = "cloudcityEventHubConnection")] IAsyncCollector<string> outputMessage, ILogger log)
+        {        
             log.LogInformation($"C# IoT Hub trigger function processed a message: {Encoding.UTF8.GetString(message.Body.Array)}");
 
             var converter = new IsoDateTimeConverter { DateTimeFormat = "MM/dd/yy HH:mm:ss" };

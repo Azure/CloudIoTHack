@@ -129,9 +129,7 @@ You can write Azure Functions in the Azure Portal, or you can write them in Visu
 
 	_Opening a blade for the event hub_
 
-	![Opening Event Hub Instance](Images/event_hub_instance.png)
 
-	_Click the event hub instance_
 
 1. Click **Shared access policies**, add SAS Policy of **RootManageSharedAccessKey** with **Manage** permission.
 
@@ -147,7 +145,7 @@ You can write Azure Functions in the Azure Portal, or you can write them in Visu
 
 
 1. Return to Visual Studio Code and add a new setting for the Azure Functions App provisioned in HOL1.
-	Enter the new setting key of **EventHubConnection** and use the connection string you copied in previous seting into the setting value.
+	Enter the new setting key of **cloudcityEventHubConnection** and use the connection string you copied in previous seting into the setting value.
 
 	![Add function setting](Images/function_settings.png)
 
